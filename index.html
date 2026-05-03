@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -345,7 +344,7 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
     <button class="ntab" onclick="showTab('part',this)">Participation</button>
     <button class="ntab" id="navTres" onclick="showTab('tres',this)" style="display:none;">Treasury</button>
     <button class="ntab" id="navRep" onclick="showTab('rep',this)" style="display:none;">Reports</button>
-    <button class="ntab" id="navEvents" onclick="showTab('events',this)" style="display:none;">📊 Events</button>
+    <button class="ntab" id="navEvents" onclick="showTab('events',this)" style="display:none;">📊 Programs</button>
     <button class="ntab" id="navTemplates" onclick="showTab('templates',this)" style="display:none;">🗂️ Templates</button>
     <button class="ntab" id="navUsers" onclick="showTab('users',this)" style="display:none;">👥 Users</button>
   </div>
@@ -405,10 +404,7 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
 
     <!-- CALENDAR -->
     <div class="sec active" id="cal">
-      <div id="calForm" style="display:none;" class="card-f"><div class="chd"><div class="ct">Add program</div></div><div class="cb"><div class="frow"><div class="field"><label>Program name</label><input type="text" id="evtName" maxlength="100" placeholder="e.g. Dharma Talk"/></div><div class="field"><label>Date</label><input type="date" id="evtDate"/></div></div><div class="frow"><div class="field"><label>Type</label><select id="evtType"><option value="dharma">Dharma Talk</option><option value="project">Project</option><option value="assembly">Assembly event</option><option value="other">Other</option></select></div><div class="field"><label>Person in charge</label><input type="text" id="evtPerson" maxlength="60" placeholder="Name"/></div></div><div id="evtErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('calForm')">Cancel</button><button class="btn btn-f" onclick="addEvt()">Add</button></div></div></div>
-      <div class="card"><div class="chd"><div class="ct">Upcoming programs</div></div><div id="evtList" style="padding-bottom:8px;"></div></div>
-      <div id="scheduledEvtInCal"></div>
-      <div id="calBtn" style="display:none;"><button class="btn btn-t" style="width:100%;" onclick="show('calForm');document.getElementById('evtDate').valueAsDate=new Date();">+ Add program</button></div>
+      <div class="card"><div class="chd"><div class="ct">Upcoming programs</div></div><div id="scheduledEvtInCal" style="padding-bottom:8px;"></div></div>
     </div>
 
     <!-- ASSEMBLY -->
@@ -437,7 +433,10 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
         <div class="card"><div class="chd"><div class="ct">Recent gatha log</div></div><div id="gathaLog" style="padding-bottom:8px;"></div></div>
         <div id="partBtn" style="display:none;margin-top:8px;"><button class="btn btn-t" style="width:100%;" onclick="show('partForm');document.getElementById('pDate').valueAsDate=new Date();">+ Record gatha</button></div>
       </div>
-      <div id="secPin" style="display:none;"><div class="sec-label"><span class="sec-label-badge sl-p">📿 Pin Katte leaderboard</span></div><div class="pin-note">Separate medals — independent from gatha rankings.</div><div class="filter-bar"><select id="pinP" onchange="renderPinLb()"><option value="all">All time</option><option value="month">This month</option><option value="term">This term</option></select></div><div id="pinPodium" class="podium"></div><div id="pinRest"></div><div class="card"><div class="chd"><div class="ct">Recent Pin Katte log</div></div><div id="pinLog" style="padding-bottom:8px;"></div></div></div>
+      <div id="secPin" style="display:none;"><div class="sec-label"><span class="sec-label-badge sl-p">📿 Pin Katte leaderboard</span></div><div class="pin-note">Separate medals — independent from gatha rankings.</div><div class="filter-bar"><select id="pinP" onchange="renderPinLb()"><option value="all">All time</option><option value="month">This month</option><option value="term">This term</option></select></div>
+        <div id="pinForm" style="display:none;" class="card-f"><div class="chd"><div class="ct">Record Pin Katte</div></div><div class="cb"><div class="frow"><div class="field"><label>Student name</label><input type="text" id="pinName" maxlength="60" placeholder="Full name"/></div><div class="field"><label>Date</label><input type="date" id="pinDate"/></div></div><div id="pinErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('pinForm')">Cancel</button><button class="btn btn-f" onclick="addPin()">Record</button></div></div></div>
+        <div id="pinBtn" style="display:none;margin-bottom:12px;"><button class="btn btn-t" style="width:100%;" onclick="show('pinForm');document.getElementById('pinDate').valueAsDate=new Date();">+ Record Pin Katte</button></div>
+        <div id="pinPodium" class="podium"></div><div id="pinRest"></div><div class="card"><div class="chd"><div class="ct">Recent Pin Katte log</div></div><div id="pinLog" style="padding-bottom:8px;"></div></div></div>
       <div id="secFeedback" style="display:none;"><div class="sec-label"><span class="sec-label-badge sl-f">⭐ Ratings &amp; Feedback</span></div><div id="fbForm" style="display:none;" class="card-f"><div class="chd"><div class="ct">Give feedback</div></div><div class="cb"><div class="frow"><div class="field"><label>Student name</label><input type="text" id="fbName" maxlength="60" placeholder="Full name" list="studentNames"/><datalist id="studentNames"></datalist></div><div class="field"><label>Gatha performed</label><select id="fbGatha"><option>Pansil</option><option>Karaniya Metta</option><option>Bavana</option><option>Jataka Katha</option><option>Life Talk</option><option>Video</option><option>Other</option></select></div></div><div class="field"><label>Star rating</label><div style="display:flex;gap:4px;margin-bottom:4px;"><button class="star-btn" onclick="setStar(1)">★</button><button class="star-btn" onclick="setStar(2)">★</button><button class="star-btn" onclick="setStar(3)">★</button><button class="star-btn" onclick="setStar(4)">★</button><button class="star-btn" onclick="setStar(5)">★</button></div></div><div class="field"><label>Written feedback</label><textarea id="fbText" maxlength="400" placeholder="e.g. Excellent pronunciation..."></textarea></div><div class="field"><label>Date</label><input type="date" id="fbDate"/></div><div id="fbErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('fbForm')">Cancel</button><button class="btn btn-f" onclick="addFeedback()">Submit</button></div></div></div><div id="fbBtn" style="display:none;margin-bottom:12px;"><button class="btn btn-t" style="width:100%;" onclick="openFbForm()">+ Give feedback</button></div><div id="fbList"></div><div id="fbEmpty" class="empty" style="display:none;">No feedback yet.</div></div>
     </div>
 
@@ -497,15 +496,15 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
       </div>
     </div>
 
-    <!-- EVENT TEMPLATES -->
+    <!-- PROGRAM TEMPLATES -->
     <div class="sec" id="templates">
-      <div id="tplLocked" class="locked" style="display:none;"><div class="locked-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="locked-h">Access restricted</div><div class="locked-b">Event templates are managed by Committee Members and above.</div><button class="btn btn-f" onclick="toggleLogin()">Sign in</button></div>
+      <div id="tplLocked" class="locked" style="display:none;"><div class="locked-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="locked-h">Access restricted</div><div class="locked-b">Program templates are managed by Committee Members and above.</div><button class="btn btn-f" onclick="toggleLogin()">Sign in</button></div>
       <div id="tplContent">
         <div id="tplForm" style="display:none;" class="card-f">
-          <div class="chd"><div class="ct" id="tplFormTitle">Create event template</div></div>
+          <div class="chd"><div class="ct" id="tplFormTitle">Create program template</div></div>
           <div class="cb">
             <div class="field"><label>Template name</label><input type="text" id="tplName" maxlength="80" placeholder="e.g. Blood Donation Drive"/></div>
-            <div class="field"><label>Description (optional)</label><textarea id="tplDesc" maxlength="300" placeholder="Brief description of this event type..."></textarea></div>
+            <div class="field"><label>Description (optional)</label><textarea id="tplDesc" maxlength="300" placeholder="Brief description of this program type..."></textarea></div>
             <div style="font-size:11px;color:var(--bsa);font-weight:500;letter-spacing:0.4px;margin-bottom:8px;">ACTIVITIES</div>
             <div id="tplActivitiesList"></div>
             <button class="btn btn-o" style="width:100%;margin-bottom:10px;" onclick="addTplActivity()">+ Add activity</button>
@@ -513,33 +512,33 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
             <div class="btn-row"><button class="btn btn-o" onclick="cancelTplForm()">Cancel</button><button class="btn btn-f" onclick="saveTpl()">Save template</button></div>
           </div>
         </div>
-        <div id="tplAddBtn"><button class="btn btn-t" style="width:100%;margin-bottom:12px;" onclick="openTplForm()">+ Create event template</button></div>
-        <div class="card"><div class="chd"><div class="ct">Event templates</div></div><div id="tplList" style="padding-bottom:8px;"></div></div>
+        <div id="tplAddBtn"><button class="btn btn-t" style="width:100%;margin-bottom:12px;" onclick="openTplForm()">+ Create program template</button></div>
+        <div class="card"><div class="chd"><div class="ct">Program templates</div></div><div id="tplList" style="padding-bottom:8px;"></div></div>
       </div>
     </div>
 
-    <!-- EVENT TRACKING -->
+    <!-- EVENT TRACKING (Programs) -->
     <div class="sec" id="events">
-      <div id="evtTrackLocked" class="locked" style="display:none;"><div class="locked-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div><div class="locked-h">Access restricted</div><div class="locked-b">Sign in to view event tracking.</div><button class="btn btn-f" onclick="toggleLogin()">Sign in</button></div>
+      <div id="evtTrackLocked" class="locked" style="display:none;"><div class="locked-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div><div class="locked-h">Access restricted</div><div class="locked-b">Sign in to view programs.</div><button class="btn btn-f" onclick="toggleLogin()">Sign in</button></div>
       <div id="evtTrackContent">
         <div id="schedForm" style="display:none;" class="card-f">
-          <div class="chd"><div class="ct">Schedule an event</div></div>
+          <div class="chd"><div class="ct">Schedule a program</div></div>
           <div class="cb">
             <div class="frow">
-              <div class="field"><label>Event template</label><select id="schedTpl" onchange="loadSchedActivities()"><option value="">Select template...</option></select></div>
-              <div class="field"><label>Event date</label><input type="date" id="schedDate"/></div>
+              <div class="field"><label>Program template</label><select id="schedTpl" onchange="loadSchedActivities()"><option value="">Select template...</option></select></div>
+              <div class="field"><label>Program date</label><input type="date" id="schedDate"/></div>
             </div>
             <div id="schedActivitiesSection" style="display:none;">
               <div style="font-size:11px;color:var(--bsa);font-weight:500;letter-spacing:0.4px;margin-bottom:8px;margin-top:4px;">ASSIGN OWNERS TO ACTIVITIES</div>
               <div id="schedActivitiesList"></div>
             </div>
             <div id="schedErr" class="err" style="display:none;"></div>
-            <div class="btn-row"><button class="btn btn-o" onclick="hide('schedForm')">Cancel</button><button class="btn btn-f" onclick="scheduleEvent()">Schedule event</button></div>
+            <div class="btn-row"><button class="btn btn-o" onclick="hide('schedForm')">Cancel</button><button class="btn btn-f" onclick="scheduleEvent()">Schedule program</button></div>
           </div>
         </div>
-        <div id="schedBtn" style="display:none;"><button class="btn btn-t" style="width:100%;margin-bottom:12px;" onclick="show('schedForm');document.getElementById('schedDate').valueAsDate=new Date();">+ Schedule event</button></div>
+        <div id="schedBtn" style="display:none;"><button class="btn btn-t" style="width:100%;margin-bottom:12px;" onclick="show('schedForm');document.getElementById('schedDate').valueAsDate=new Date();">+ Schedule program</button></div>
         <div id="evtTrackList"></div>
-        <div class="empty" id="evtTrackEmpty" style="display:none;">No scheduled events yet.</div>
+        <div class="empty" id="evtTrackEmpty" style="display:none;">No programs scheduled yet.</div>
       </div>
     </div>
 
@@ -675,7 +674,7 @@ async function bootstrap(){
 function startListeners(){
   unsubs.forEach(u=>u());unsubs=[];
   unsubs.push(onSnapshot(query(collection(db,'notices'),orderBy('createdAt','desc')),(s)=>{notices=s.docs.map(d=>({id:d.id,...d.data()}));renderNotices();renderSpot();updateTicker();updateBadges();renderDashboard();}));
-  unsubs.push(onSnapshot(query(collection(db,'events'),orderBy('date','asc')),(s)=>{events=s.docs.map(d=>({id:d.id,...d.data()}));renderEv();updateBadges();renderDashboard();}));
+  unsubs.push(onSnapshot(query(collection(db,'scheduledEvents'),orderBy('date','asc')),(s)=>{scheduledEvents=s.docs.map(d=>({id:d.id,...d.data()}));renderEvtTrack();renderEvtInCal();renderDashboard();}));
   unsubs.push(onSnapshot(doc(db,'config','duties'),(s)=>{duties=s.exists()?s.data():{};renderAsm();}));
   unsubs.push(onSnapshot(query(collection(db,'participation'),orderBy('date','desc')),(s)=>{parts=s.docs.map(d=>({id:d.id,...d.data()}));renderGathaLb();renderGathaLog();renderSpot();renderDashboard();}));
   unsubs.push(onSnapshot(query(collection(db,'pins'),orderBy('date','desc')),(s)=>{pins=s.docs.map(d=>({id:d.id,...d.data()}));renderPinLb();renderPinLog();}));
@@ -715,9 +714,9 @@ function applyRole(){
   document.getElementById('navEvents').style.display=isMem()?'block':'none';
   document.getElementById('navTemplates').style.display=isCom()?'block':'none';
   document.getElementById('navUsers').style.display=isSU()?'block':'none';
-  document.getElementById('calBtn').style.display=isCom()?'block':'none';
   document.getElementById('asmBtn').style.display=isCom()?'block':'none';
   document.getElementById('partBtn').style.display=isSU()&&activeTab==='gatha'?'block':'none';
+  document.getElementById('pinBtn').style.display=isSU()&&activeTab==='pin'?'block':'none';
   document.getElementById('fbBtn').style.display=isCom()&&activeTab==='feedback'?'block':'none';
   document.getElementById('noticePostBtn').style.display=isCom()?'block':'none';
   ['addColBtn','addExpBtn','addDepBtn','addHlogBtn'].forEach(id=>document.getElementById(id).style.display=isSU()?'block':'none');
@@ -734,7 +733,7 @@ function showTab(id,btn){
   if(id==='tres')renderT();
   if(id==='rep')renderRep();
   if(id==='notice'){renderSpot();renderNotices();updateTicker();markNSeen();}
-  if(id==='cal'){renderEv();markCSeen();}
+  if(id==='cal'){renderEvtInCal();markCSeen();}
   if(id==='part'){renderGathaLb();renderGathaLog();renderPinLb();renderPinLog();renderFb();}
   if(id==='users')renderUsers();
   if(id==='events')renderEvtTrack();
@@ -835,6 +834,8 @@ window.askDelPart=askDelPart;
 // PIN KATTE
 function renderPinLb(){const per=document.getElementById('pinP').value;const fl=fpf(pins,per);const cnt={};fl.forEach(p=>{cnt[p.name]=(cnt[p.name]||0)+1;});const sorted=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);const max=sorted.length?sorted[0][1]:1;const cr=['🥇','🥈','🥉'],pCls=['pk-1','pk-2','pk-3'],ps2=['border-radius:var(--r-m);padding:16px;display:flex;align-items:center;gap:12px;','border-radius:var(--r-m);padding:13px;display:flex;align-items:center;gap:12px;','border-radius:var(--r-m);padding:12px;display:flex;align-items:center;gap:12px;'];document.getElementById('pinPodium').innerHTML=sorted.slice(0,3).length?sorted.slice(0,3).map(([name,count],i)=>`<div class="${pCls[i]}" style="${ps2[i]}"><div class="podium-crown">${cr[i]}</div><div class="podium-av">${ini(name)}</div><div class="podium-body"><div class="podium-name">${san(name)}</div><div class="podium-activities">Carried ${count} time${count!==1?'s':''}</div></div><div class="podium-score-block"><div class="podium-score">${count}</div><div class="podium-score-lbl">days</div></div></div>`).join(''):'<div class="empty">No entries yet.</div>';const rEl=document.getElementById('pinRest');const rest=sorted.slice(3);if(rest.length){rEl.innerHTML=`<div class="lb-list">${rest.map(([name,count],i)=>`<div class="lb-item"><div class="lb-rank">${i+4}</div><div class="lb-av p">${ini(name)}</div><div class="lb-item-body"><div class="lb-item-name">${san(name)}</div><div class="lb-item-acts">Carried ${count} time${count!==1?'s':''}</div></div><div class="lb-score-bar-wrap"><div class="lb-score-bar"><div class="lb-score-fill" style="width:${Math.round(count/max*100)}%;background:#7A5A00;"></div></div></div><div class="lb-pts" style="color:#7A5A00;">${count}</div></div>`).join('')}</div>`;}else rEl.innerHTML='';}
 function renderPinLog(){const rc=pins.slice(0,10);document.getElementById('pinLog').innerHTML=rc.length?rc.map(p=>`<div class="li"><div class="li-body"><div class="li-t">${san(p.name)}</div><div class="li-s">${fd(p.date)}</div></div><div class="li-r"><span class="chip" style="background:#FFF8E1;color:#5C3D00;border:1px solid #FFD54F;">📿 Pin Katte</span>${isSU()?dB(`askDelPin('${p.id}','${san(p.name).replace(/'/g,"\\'")}')`):''}  </div></div>`).join(''):'<div class="empty">No entries yet.</div>';}
+async function addPin(){if(!isSU())return;const name=san(document.getElementById('pinName').value),date=document.getElementById('pinDate').value,err=document.getElementById('pinErr');if(!name||!date){err.textContent='Name and date required.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'pins'),{date,name,createdAt:serverTimestamp()});document.getElementById('pinName').value='';hide('pinForm');}
+window.addPin=addPin;
 async function askDelPin(id,name){if(!isSU())return;askDel(`Delete Pin Katte entry for ${name}?`,async()=>{await deleteDoc(doc(db,'pins',id));});}
 window.askDelPin=askDelPin;
 
@@ -1069,10 +1070,17 @@ function cancelTplForm(){
 window.cancelTplForm=cancelTplForm;
 
 function addTplActivity(){
-  tplActivityRows.push({name:'',cost:''});
+  tplActivityRows.push({name:'',hasCost:false,cost:''});
   renderTplActivityInputs();
 }
 window.addTplActivity=addTplActivity;
+
+function toggleActCost(i){
+  tplActivityRows[i].hasCost=!tplActivityRows[i].hasCost;
+  if(!tplActivityRows[i].hasCost)tplActivityRows[i].cost='';
+  renderTplActivityInputs();
+}
+window.toggleActCost=toggleActCost;
 
 function removeTplActivity(i){
   tplActivityRows.splice(i,1);
@@ -1082,9 +1090,13 @@ window.removeTplActivity=removeTplActivity;
 
 function renderTplActivityInputs(){
   document.getElementById('tplActivitiesList').innerHTML=tplActivityRows.map((a,i)=>`
-    <div class="act-input-row">
-      <input type="text" placeholder="Activity name (e.g. Registration)" maxlength="80" value="${san(a.name)}" oninput="tplActivityRows[${i}].name=this.value"/>
-      <input type="number" class="act-cost-input" placeholder="Cost (Rs) optional" min="0" max="999999" value="${a.cost}" oninput="tplActivityRows[${i}].cost=this.value"/>
+    <div class="act-input-row" style="flex-wrap:wrap;">
+      <input type="text" placeholder="Activity name (e.g. Registration)" maxlength="80" value="${san(a.name)}" oninput="tplActivityRows[${i}].name=this.value" style="flex:1;min-width:160px;padding:8px 10px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:13px;height:38px;"/>
+      <div style="display:flex;align-items:center;gap:6px;height:38px;">
+        <span style="font-size:12px;color:var(--ots-v);">Has cost?</span>
+        <button onclick="toggleActCost(${i})" style="padding:4px 12px;border-radius:var(--r-f);border:1px solid var(--out-v);background:${a.hasCost?'var(--bsa)':'var(--sur)'};color:${a.hasCost?'#fff':'var(--ots-v)'};font-size:12px;font-weight:600;cursor:pointer;height:32px;">${a.hasCost?'Yes':'No'}</button>
+      </div>
+      ${a.hasCost?`<input type="number" placeholder="Amount (Rs)" min="0" max="999999" value="${a.cost||''}" oninput="tplActivityRows[${i}].cost=this.value" style="width:120px;padding:8px 10px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:13px;height:38px;"/>`:``}
       <button class="act-rm-btn" onclick="removeTplActivity(${i})"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
     </div>`).join('');
 }
@@ -1096,7 +1108,7 @@ async function saveTpl(){
   const err=document.getElementById('tplErr');
   if(!name){err.textContent='Please enter a template name.';err.style.display='block';return;}
   if(tplActivityRows.length===0){err.textContent='Please add at least one activity.';err.style.display='block';return;}
-  const activities=tplActivityRows.filter(a=>a.name.trim()).map(a=>({name:san(a.name),cost:a.cost?sanNum(a.cost,0,999999)||0:null}));
+  const activities=tplActivityRows.filter(a=>a.name.trim()).map(a=>({name:san(a.name),hasCost:a.hasCost,cost:a.hasCost?(sanNum(a.cost,0,999999)||0):null}));
   if(activities.length===0){err.textContent='Please enter at least one activity name.';err.style.display='block';return;}
   err.style.display='none';
   await addDoc(collection(db,'eventTemplates'),{name,desc,activities,createdBy:curUser.id,createdAt:serverTimestamp()});
@@ -1283,19 +1295,20 @@ window.askDelSchedEvt=askDelSchedEvt;
 function renderEvtInCal(){
   const el=document.getElementById('scheduledEvtInCal');
   if(!el)return;
-  if(!scheduledEvents.length){el.innerHTML='';return;}
-  el.innerHTML=`<div class="card"><div class="chd"><div class="ct">Scheduled events</div></div>`
-    +scheduledEvents.map(e=>{
-      const{day,mon}=fdy(e.date);
-      return`<div class="li">
-        <div style="width:40px;height:40px;background:#EDE7F6;border-radius:var(--r-s);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">
-          <span style="font-size:16px;font-weight:500;color:#311B92;line-height:1;">${day}</span>
-          <span style="font-size:10px;color:#311B92;text-transform:uppercase;">${mon}</span>
-        </div>
-        <div class="li-body"><div class="li-t">${san(e.name)}</div><div class="li-s">Scheduled event</div></div>
-        <div class="li-r"><span class="chip c-p">Event</span></div>
-      </div>`;
-    }).join('')+'</div>';
+  if(!scheduledEvents.length){el.innerHTML='<div class="empty">No programs scheduled yet.</div>';return;}
+  el.innerHTML=scheduledEvents.map(e=>{
+    const{day,mon}=fdy(e.date);
+    const done=(e.activities||[]).filter(a=>a.status==='done').length;
+    const total=(e.activities||[]).length;
+    return`<div class="li">
+      <div style="width:40px;height:40px;background:#EDE7F6;border-radius:var(--r-s);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">
+        <span style="font-size:16px;font-weight:500;color:#311B92;line-height:1;">${day}</span>
+        <span style="font-size:10px;color:#311B92;text-transform:uppercase;">${mon}</span>
+      </div>
+      <div class="li-body"><div class="li-t">${san(e.name)}</div><div class="li-s">${total} activit${total!==1?'ies':'y'} · ${done}/${total} done</div></div>
+      <div class="li-r"><span class="chip c-p">Program</span></div>
+    </div>`;
+  }).join('');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1361,7 +1374,7 @@ function renderDashboard(){
     }
     if(isCom()){
       actions.push({icon:'📢',label:'Post Notice',sub:'Share an update',fn:`showTab('notice',document.querySelectorAll('.ntab')[1]);setTimeout(()=>show('noticeForm'),100)`});
-      actions.push({icon:'📅',label:'Add Event',sub:'Calendar program',fn:`showTab('cal',document.querySelectorAll('.ntab')[2]);setTimeout(()=>{show('calForm');document.getElementById('evtDate').valueAsDate=new Date();},100)`});
+      actions.push({icon:'📅',label:'Schedule Program',sub:'Plan a new program',fn:`showTab('events',document.getElementById('navEvents'))`});
       actions.push({icon:'📿',label:'Record Collection',sub:'Pin Katte',fn:`showTab('tres',document.querySelectorAll('.ntab')[5]);setTimeout(()=>show('frmC'),100)`});
       actions.push({icon:'⭐',label:'Give Feedback',sub:'Rate a gatha',fn:`showTab('part',document.querySelectorAll('.ntab')[4]);setTimeout(()=>{switchPTab('feedback');setTimeout(()=>openFbForm(),100);},100)`});
     }
@@ -1387,11 +1400,11 @@ function renderDashboard(){
   // Events this week
   const now=new Date(),weekEnd=new Date(now.getTime()+7*864e5);
   const thisWeekEvts=scheduledEvents.filter(e=>{const d=new Date(e.date+'T00:00:00');return d>=now&&d<=weekEnd;});
-  if(thisWeekEvts.length){notifs.push({icon:'📅',title:`${thisWeekEvts.length} event${thisWeekEvts.length>1?'s':''} this week`,sub:thisWeekEvts.map(e=>san(e.name)).join(', '),action:'View events',fn:`showTab('events',document.getElementById('navEvents'))`});}
+  if(thisWeekEvts.length){notifs.push({icon:'📅',title:`${thisWeekEvts.length} program${thisWeekEvts.length>1?'s':''} this week`,sub:thisWeekEvts.map(e=>san(e.name)).join(', '),action:'View programs',fn:`showTab('events',document.getElementById('navEvents'))`});}
   if(curUser&&isMem()){
     // My assigned activities
     const myActs=scheduledEvents.flatMap(e=>(e.activities||[]).filter(a=>a.owner===curUser.username&&a.status!=='done').map(a=>({...a,eventName:e.name})));
-    if(myActs.length){notifs.push({icon:'⚙️',title:`You have ${myActs.length} pending task${myActs.length>1?'s':''}`,sub:myActs.slice(0,2).map(a=>`${san(a.name)} in ${san(a.eventName)}`).join(', '),action:'View events',fn:`showTab('events',document.getElementById('navEvents'))`});}
+    if(myActs.length){notifs.push({icon:'⚙️',title:`You have ${myActs.length} pending task${myActs.length>1?'s':''}`,sub:myActs.slice(0,2).map(a=>`${san(a.name)} in ${san(a.eventName)}`).join(', '),action:'View programs',fn:`showTab('events',document.getElementById('navEvents'))`});}
   }
   if(notifs.length){
     notifEl.style.display='block';
@@ -1410,7 +1423,7 @@ function renderDashboard(){
   const totalPts=parts.reduce((s,p)=>s+(POINTS[p.gatha]||2),0);
   const bal=cols.reduce((s,c)=>s+(c.amount||0),0)-exps.reduce((s,e)=>s+(e.amount||0),0);
   document.getElementById('dashStats').innerHTML=`
-    <div class="dash-stat"><div class="dash-stat-v">${scheduledEvents.length}</div><div class="dash-stat-l">Scheduled events</div></div>
+    <div class="dash-stat"><div class="dash-stat-v">${scheduledEvents.length}</div><div class="dash-stat-l">Scheduled programs</div></div>
     <div class="dash-stat"><div class="dash-stat-v">${parts.length}</div><div class="dash-stat-l">Gatha entries</div></div>
     ${isCom()?`<div class="dash-stat"><div class="dash-stat-v" style="font-size:14px;">Rs ${bal.toLocaleString()}</div><div class="dash-stat-l">Treasury balance</div></div>`:`<div class="dash-stat"><div class="dash-stat-v">${totalPts}</div><div class="dash-stat-l">Total points earned</div></div>`}`;
 

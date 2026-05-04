@@ -447,7 +447,7 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
         <div class="hand-card"><div><div class="hand-l">Cash held by treasurer</div><div class="hand-a" id="handAmt">Rs 0</div><div class="hand-n" id="handNote">No reason recorded</div></div><button class="btn btn-f" id="handBtn" onclick="openHandDlg()" style="display:none;">Update</button></div>
         <div class="metric-row"><div class="metric"><div class="metric-v" style="color:var(--grn);" id="mInc">Rs 0</div><div class="metric-l">Income</div></div><div class="metric"><div class="metric-v" style="color:var(--red);" id="mExp">Rs 0</div><div class="metric-l">Expenses</div></div><div class="metric"><div class="metric-v" style="color:var(--bsa);" id="mBal">Rs 0</div><div class="metric-l">Balance</div></div></div>
         <div class="stabs"><button class="stab active" onclick="showSub('tsC',this)">Pin Katte</button><button class="stab" onclick="showSub('tsE',this)">Expenses</button><button class="stab" onclick="showSub('tsD',this)">Deposits</button><button class="stab" onclick="showSub('tsH',this)">Cash log</button><button class="stab" onclick="showSub('tsPat',this)">📈 Patterns</button></div>
-        <div id="tsC"><div id="frmC" style="display:none;" class="card-f"><div class="chd"><div class="ct">Record collection</div></div><div class="cb"><div class="frow"><div class="field"><label>Date</label><input type="date" id="colDate"/></div><div class="field"><label>Amount (Rs)</label><input type="number" id="colAmt" min="1" max="99999"/></div></div><div class="snote">Enter the two students who carried the Pin Katte.</div><div class="frow"><div class="field"><label>Student 1</label><input type="text" id="col1" maxlength="60"/></div><div class="field"><label>Student 2 (optional)</label><input type="text" id="col2" maxlength="60"/></div></div><div id="colErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('frmC')">Cancel</button><button class="btn btn-f" onclick="addCol()">Record</button></div></div></div><div id="addColBtn" style="display:none;"><button class="btn btn-t" style="width:100%;margin-bottom:10px;" onclick="show('frmC');document.getElementById('colDate').valueAsDate=new Date();">+ Record collection</button></div><div class="card"><div class="chd"><div class="ct">Collections</div></div><div id="colList" style="padding-bottom:8px;"></div></div></div>
+        <div id="tsC"><div id="frmC" style="display:none;" class="card-f"><div class="chd"><div class="ct">Record Pin Katte collection</div></div><div class="cb"><div class="frow"><div class="field"><label>Date</label><input type="date" id="colDate"/></div><div class="field"><label>Amount (Rs)</label><input type="number" id="colAmt" min="1" max="99999"/></div></div><div class="field"><label>Slip number (optional)</label><input type="text" id="colSlip" maxlength="40" placeholder="e.g. 001234"/></div><div id="colErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('frmC')">Cancel</button><button class="btn btn-f" onclick="addCol()">Record</button></div></div></div><div id="addColBtn" style="display:none;"><button class="btn btn-t" style="width:100%;margin-bottom:10px;" onclick="show('frmC');document.getElementById('colDate').valueAsDate=new Date();">+ Record collection</button></div><div class="card"><div class="chd"><div class="ct">Collections</div></div><div id="colList" style="padding-bottom:8px;"></div></div></div>
         <div id="tsE" style="display:none;"><div id="frmE" style="display:none;" class="card-f"><div class="chd"><div class="ct">Record expense</div></div><div class="cb"><div class="frow"><div class="field"><label>Date</label><input type="date" id="expDate"/></div><div class="field"><label>Amount (Rs)</label><input type="number" id="expAmt" min="1" max="99999"/></div></div><div class="frow"><div class="field"><label>Category</label><select id="expCat"><option value="stationery">Stationery</option><option value="decorations">Decorations</option><option value="donation">Donation</option><option value="transport">Transport</option><option value="food">Food</option><option value="petty">Petty cash</option><option value="other">Other</option></select></div><div class="field"><label>Reason</label><input type="text" id="expNote" maxlength="120"/></div></div><div id="expErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('frmE')">Cancel</button><button class="btn btn-f" onclick="addExp()">Record</button></div></div></div><div id="addExpBtn" style="display:none;"><button class="btn btn-t" style="width:100%;margin-bottom:10px;" onclick="show('frmE');document.getElementById('expDate').valueAsDate=new Date();">+ Record expense</button></div><div class="card"><div class="chd"><div class="ct">Expenses</div></div><div id="expList" style="padding-bottom:8px;"></div></div></div>
         <div id="tsD" style="display:none;"><div id="frmD" style="display:none;" class="card-f"><div class="chd"><div class="ct">Record deposit</div></div><div class="cb"><div class="frow"><div class="field"><label>Date</label><input type="date" id="depDate"/></div><div class="field"><label>Amount (Rs)</label><input type="number" id="depAmt" min="1" max="99999"/></div></div><div class="field"><label>Reference / slip no.</label><input type="text" id="depRef" maxlength="40"/></div><div id="depErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('frmD')">Cancel</button><button class="btn btn-f" style="background:var(--grn);" onclick="addDep()">Record</button></div></div></div><div id="addDepBtn" style="display:none;"><button class="btn btn-t" style="width:100%;margin-bottom:10px;" onclick="show('frmD');document.getElementById('depDate').valueAsDate=new Date();">+ Record deposit</button></div><div class="card"><div class="chd"><div class="ct">Deposits</div></div><div id="depList" style="padding-bottom:8px;"></div></div></div>
         <div id="tsH" style="display:none;"><div id="frmH" style="display:none;" class="card-f"><div class="chd"><div class="ct">Log cash entry</div></div><div class="cb"><div class="frow"><div class="field"><label>Date</label><input type="date" id="hDate"/></div><div class="field"><label>Amount (Rs)</label><input type="number" id="hAmt" min="1" max="99999"/></div></div><div class="frow"><div class="field"><label>Type</label><select id="hType"><option value="in">Received</option><option value="out">Returned / spent</option></select></div><div class="field"><label>Reason</label><input type="text" id="hNote" maxlength="120"/></div></div><div id="hErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('frmH')">Cancel</button><button class="btn btn-f" style="background:var(--blu);" onclick="addHlog()">Log</button></div></div></div><div id="addHlogBtn" style="display:none;"><button class="btn btn-t" style="width:100%;margin-bottom:10px;" onclick="show('frmH');document.getElementById('hDate').valueAsDate=new Date();">+ Log cash entry</button></div><div class="card"><div class="chd"><div class="ct">Cash log</div></div><div id="hlogList" style="padding-bottom:8px;"></div></div></div>
@@ -554,13 +554,22 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
         <div class="field"><label>Username</label><input type="text" id="liUser" maxlength="40" placeholder="Your username" autocomplete="username"/></div>
         <div class="field"><label>Password</label><input type="password" id="liPw" maxlength="40" placeholder="Your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"/></div>
         <div id="liErr" class="err" style="display:none;">Incorrect username or password.</div>
-        <div class="dlg-act"><button class="btn-tx" onclick="showSignupView()">Join with invite code</button><button class="btn btn-f" id="liBtn" onclick="doLogin()">Sign in</button></div>
+        <div class="dlg-act"><button class="btn-tx" onclick="showSignupView()">Create account</button><button class="btn btn-f" id="liBtn" onclick="doLogin()">Sign in</button></div>
         <div style="text-align:center;margin-top:8px;"><button class="btn-tx" onclick="closeDlg('loginDlg')">Cancel</button></div>
       </div>
       <div id="signupView" style="display:none;">
         <div class="dlg-t">Join BSA Portal</div>
-        <div class="dlg-b">Enter your invite code to create your account.</div>
-        <div class="field"><label>Invite code</label><input type="text" id="suCode" maxlength="8" placeholder="e.g. BSA-A1B2" style="text-transform:uppercase;letter-spacing:2px;" oninput="this.value=this.value.toUpperCase()"/></div>
+        <div class="dlg-b">Create your account to get started.</div>
+        <div class="field"><label>Role</label>
+          <select id="suRole" onchange="toggleInviteField()">
+            <option value="member">👤 Member</option>
+            <option value="committee">🏛️ Committee Member</option>
+            <option value="superuser">⚡ Super User</option>
+          </select>
+        </div>
+        <div id="inviteCodeField" style="display:none;">
+          <div class="field"><label>Invite code</label><input type="text" id="suCode" maxlength="8" placeholder="e.g. BSA-A1B2" style="text-transform:uppercase;letter-spacing:2px;" oninput="this.value=this.value.toUpperCase()"/></div>
+        </div>
         <div class="field"><label>Full name</label><input type="text" id="suName" maxlength="60" placeholder="Your full name"/></div>
         <div class="field"><label>Username</label><input type="text" id="suUser" maxlength="30" placeholder="Choose a username (letters, numbers, dots)"/></div>
         <div class="field"><label>Password</label><input type="password" id="suPw" maxlength="40" placeholder="Min 6 characters"/></div>
@@ -832,7 +841,51 @@ async function askDelPart(id,name){if(!isSU())return;askDel(`Delete participatio
 window.askDelPart=askDelPart;
 
 // PIN KATTE
-function renderPinLb(){const per=document.getElementById('pinP').value;const fl=fpf(pins,per);const cnt={};fl.forEach(p=>{cnt[p.name]=(cnt[p.name]||0)+1;});const sorted=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);const max=sorted.length?sorted[0][1]:1;const cr=['🥇','🥈','🥉'],pCls=['pk-1','pk-2','pk-3'],ps2=['border-radius:var(--r-m);padding:16px;display:flex;align-items:center;gap:12px;','border-radius:var(--r-m);padding:13px;display:flex;align-items:center;gap:12px;','border-radius:var(--r-m);padding:12px;display:flex;align-items:center;gap:12px;'];document.getElementById('pinPodium').innerHTML=sorted.slice(0,3).length?sorted.slice(0,3).map(([name,count],i)=>`<div class="${pCls[i]}" style="${ps2[i]}"><div class="podium-crown">${cr[i]}</div><div class="podium-av">${ini(name)}</div><div class="podium-body"><div class="podium-name">${san(name)}</div><div class="podium-activities">Carried ${count} time${count!==1?'s':''}</div></div><div class="podium-score-block"><div class="podium-score">${count}</div><div class="podium-score-lbl">days</div></div></div>`).join(''):'<div class="empty">No entries yet.</div>';const rEl=document.getElementById('pinRest');const rest=sorted.slice(3);if(rest.length){rEl.innerHTML=`<div class="lb-list">${rest.map(([name,count],i)=>`<div class="lb-item"><div class="lb-rank">${i+4}</div><div class="lb-av p">${ini(name)}</div><div class="lb-item-body"><div class="lb-item-name">${san(name)}</div><div class="lb-item-acts">Carried ${count} time${count!==1?'s':''}</div></div><div class="lb-score-bar-wrap"><div class="lb-score-bar"><div class="lb-score-fill" style="width:${Math.round(count/max*100)}%;background:#7A5A00;"></div></div></div><div class="lb-pts" style="color:#7A5A00;">${count}</div></div>`).join('')}</div>`;}else rEl.innerHTML='';}
+function renderPinLb(){
+  const per=document.getElementById('pinP').value;
+  const fl=fpf(pins,per);
+  const cnt={};
+  fl.forEach(p=>{cnt[p.name]=(cnt[p.name]||0)+1;});
+  const sorted=Object.entries(cnt).sort((a,b)=>b[1]-a[1]);
+  const max=sorted.length?sorted[0][1]:1;
+  const top3=sorted.slice(0,3);
+  const rest=sorted.slice(3);
+  const cr=['🥇','🥈','🥉'];
+  const cls=['podium-1','podium-2','podium-3'];
+
+  document.getElementById('pinPodium').innerHTML=top3.length?top3.map(([name,count],i)=>`
+    <div class="${cls[i]}">
+      <div class="podium-crown">${cr[i]}</div>
+      <div class="podium-av">${ini(name)}</div>
+      <div class="podium-body">
+        <div class="podium-name">${san(name)}</div>
+        <div class="podium-activities">Carried ${count} time${count!==1?'s':''}</div>
+      </div>
+      <div class="podium-score-block">
+        <div class="podium-score">${count}</div>
+        <div class="podium-score-lbl">days</div>
+      </div>
+    </div>`).join(''):'<div class="empty" style="background:var(--sur);border-radius:var(--r-m);padding:24px;">No entries yet.</div>';
+
+  const rEl=document.getElementById('pinRest');
+  if(rest.length){
+    rEl.innerHTML=`<div class="lb-list">${rest.map(([name,count],i)=>`
+      <div class="lb-item">
+        <div class="lb-rank">${i+4}</div>
+        <div class="lb-av p">${ini(name)}</div>
+        <div class="lb-item-body">
+          <div class="lb-item-name">${san(name)}</div>
+          <div class="lb-item-acts">Carried ${count} time${count!==1?'s':''}</div>
+        </div>
+        <div class="lb-score-bar-wrap">
+          <div class="lb-score-bar">
+            <div class="lb-score-fill" style="width:${Math.round(count/max*100)}%;background:#7A5A00;"></div>
+          </div>
+        </div>
+        <div class="lb-pts" style="color:#7A5A00;">${count}</div>
+      </div>`).join('')}</div>`;
+  } else rEl.innerHTML='';
+}
 function renderPinLog(){const rc=pins.slice(0,10);document.getElementById('pinLog').innerHTML=rc.length?rc.map(p=>`<div class="li"><div class="li-body"><div class="li-t">${san(p.name)}</div><div class="li-s">${fd(p.date)}</div></div><div class="li-r"><span class="chip" style="background:#FFF8E1;color:#5C3D00;border:1px solid #FFD54F;">📿 Pin Katte</span>${isSU()?dB(`askDelPin('${p.id}','${san(p.name).replace(/'/g,"\\'")}')`):''}  </div></div>`).join(''):'<div class="empty">No entries yet.</div>';}
 async function addPin(){if(!isSU())return;const name=san(document.getElementById('pinName').value),date=document.getElementById('pinDate').value,err=document.getElementById('pinErr');if(!name||!date){err.textContent='Name and date required.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'pins'),{date,name,createdAt:serverTimestamp()});document.getElementById('pinName').value='';hide('pinForm');}
 window.addPin=addPin;
@@ -860,13 +913,13 @@ function renderT(){
   document.getElementById('mBal').textContent='Rs '+(inc-exp).toLocaleString();
   document.getElementById('handAmt').textContent='Rs '+(hcur.amount||0).toLocaleString();
   document.getElementById('handNote').textContent=san(hcur.note||'No reason recorded');
-  document.getElementById('colList').innerHTML=cols.slice(0,8).length?cols.slice(0,8).map(c=>`<div class="li"><div class="li-body"><div class="li-t">Rs ${(c.amount||0).toLocaleString()}</div><div class="li-s">${fd(c.date)}${c.s1?' · 📿 '+san(c.s1)+(c.s2?', '+san(c.s2):''):''}</div></div><div class="li-r"><span class="chip c-g">Pin Katte</span>${isSU()?dB(`askDelCol('${c.id}')`):''}  </div></div>`).join(''):'<div class="empty">No collections yet.</div>';
+  document.getElementById('colList').innerHTML=cols.slice(0,8).length?cols.slice(0,8).map(c=>`<div class="li"><div class="li-body"><div class="li-t">Rs ${(c.amount||0).toLocaleString()}</div><div class="li-s">${fd(c.date)}${c.slip?' · Slip: '+san(c.slip):''}</div></div><div class="li-r"><span class="chip c-g">Pin Katte</span>${isSU()?dB(`askDelCol('${c.id}')`):''}  </div></div>`).join(''):'<div class="empty">No collections yet.</div>';
   document.getElementById('expList').innerHTML=exps.slice(0,6).length?exps.slice(0,6).map(e=>`<div class="li"><div class="li-body"><div class="li-t">${san(e.note)}</div><div class="li-s">${fd(e.date)} · ${CL[e.cat]||'Other'}</div></div><div class="li-r"><span class="chip c-r">Rs ${(e.amount||0).toLocaleString()}</span>${isSU()?dB(`askDelExp('${e.id}','${san(e.note||'').replace(/'/g,"\\'")}')`):''}  </div></div>`).join(''):'<div class="empty">No expenses yet.</div>';
   document.getElementById('depList').innerHTML=deps.length?deps.map(d=>`<div class="li"><div class="li-body"><div class="li-t">Bank deposit</div><div class="li-s">${fd(d.date)}${d.ref?' · Ref: '+san(d.ref):''}</div></div><div class="li-r"><span class="chip c-gr">Rs ${(d.amount||0).toLocaleString()}</span>${isSU()?dB(`askDelDep('${d.id}')`):''}  </div></div>`).join(''):'<div class="empty">No deposits recorded.</div>';
   document.getElementById('hlogList').innerHTML=hlogs.slice(0,10).length?hlogs.slice(0,10).map(h=>`<div class="li"><div style="width:36px;height:36px;border-radius:50%;background:${h.type==='in'?'#D6F5E3':'#FDECEA'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${h.type==='in'?'<svg width="18" height="18" viewBox="0 0 24 24" fill="#006E30"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg>':'<svg width="18" height="18" viewBox="0 0 24 24" fill="#B3261E"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>'}</div><div class="li-body"><div class="li-t">${san(h.note)}</div><div class="li-s">${fd(h.date)}</div></div><div class="li-r"><span style="font-size:13px;font-weight:500;color:${h.type==='in'?'var(--grn)':'var(--red)'};">${h.type==='in'?'+':'−'} Rs ${(h.amount||0).toLocaleString()}</span>${isSU()?dB(`askDelHlog('${h.id}')`):''}  </div></div>`).join(''):'<div class="empty">No entries yet.</div>';
   applyRole();
 }
-async function addCol(){if(!isSU())return;const d=document.getElementById('colDate').value,a=sanNum(document.getElementById('colAmt').value,1,99999),s1=san(document.getElementById('col1').value),s2=san(document.getElementById('col2').value),err=document.getElementById('colErr');if(!d||a===null){err.textContent='Valid date and amount required.';err.style.display='block';return;}if(!s1){err.textContent='Please enter at least one student name.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'collections'),{date:d,amount:a,s1,s2,createdAt:serverTimestamp()});if(s1)await addDoc(collection(db,'pins'),{date:d,name:s1,createdAt:serverTimestamp()});if(s2)await addDoc(collection(db,'pins'),{date:d,name:s2,createdAt:serverTimestamp()});['colAmt','col1','col2'].forEach(i=>document.getElementById(i).value='');hide('frmC');}
+async function addCol(){if(!isSU())return;const d=document.getElementById('colDate').value,a=sanNum(document.getElementById('colAmt').value,1,99999),slip=san(document.getElementById('colSlip').value),err=document.getElementById('colErr');if(!d||a===null){err.textContent='Valid date and amount required.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'collections'),{date:d,amount:a,slip,createdAt:serverTimestamp()});['colAmt','colSlip'].forEach(i=>document.getElementById(i).value='');hide('frmC');}
 window.addCol=addCol;
 async function addExp(){if(!isSU())return;const d=document.getElementById('expDate').value,a=sanNum(document.getElementById('expAmt').value,1,99999),cat=document.getElementById('expCat').value,note=san(document.getElementById('expNote').value),err=document.getElementById('expErr');if(!d||a===null||!note){err.textContent='All fields required.';err.style.display='block';return;}if(!VEC.includes(cat)){err.textContent='Invalid category.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'expenses'),{date:d,amount:a,cat,note,createdAt:serverTimestamp()});['expAmt','expNote'].forEach(i=>document.getElementById(i).value='');hide('frmE');}
 window.addExp=addExp;
@@ -1003,35 +1056,45 @@ async function doLogin(){
 }
 window.doLogin=doLogin;
 
+function toggleInviteField(){
+  const role=document.getElementById('suRole').value;
+  document.getElementById('inviteCodeField').style.display=(role==='member')?'none':'block';
+}
+window.toggleInviteField=toggleInviteField;
+
 async function doSignup(){
-  const code=document.getElementById('suCode').value.trim().toUpperCase();
+  const role=document.getElementById('suRole').value;
+  const code=role==='member'?'':document.getElementById('suCode')?.value.trim().toUpperCase()||'';
   const name=san(document.getElementById('suName').value);
   const username=document.getElementById('suUser').value.trim().toLowerCase().replace(/\s/g,'');
   const pw=document.getElementById('suPw').value;
   const err=document.getElementById('suErr'),ok=document.getElementById('suOk'),btn=document.getElementById('suBtn');
   err.style.display='none';ok.style.display='none';
-  if(!code||!name||!username||!pw){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(!name||!username||!pw){err.textContent='Please fill in all fields.';err.style.display='block';return;}
+  if(role!=='member'&&!code){err.textContent='Please enter your invite code.';err.style.display='block';return;}
   if(username.length<3){err.textContent='Username must be at least 3 characters.';err.style.display='block';return;}
   if(pw.length<6){err.textContent='Password must be at least 6 characters.';err.style.display='block';return;}
   if(/[^a-z0-9._]/.test(username)){err.textContent='Username: letters, numbers, dots and underscores only.';err.style.display='block';return;}
   btn.disabled=true;btn.textContent='Creating...';
   try{
-    // Validate code
-    const invSnap=await getDocs(collection(db,'invites'));
-    const invDoc=invSnap.docs.find(d=>{const i=d.data();return i.code===code&&!i.used&&new Date(i.expiresAt)>new Date();});
-    if(!invDoc){err.textContent='Invalid or expired invite code.';err.style.display='block';btn.disabled=false;btn.textContent='Create account';return;}
-    const invite=invDoc.data();
+    // For committee/superuser validate invite code
+    let invDoc=null;
+    if(role!=='member'){
+      const invSnap=await getDocs(collection(db,'invites'));
+      invDoc=invSnap.docs.find(d=>{const i=d.data();return i.code===code&&!i.used&&new Date(i.expiresAt)>new Date()&&i.role===role;});
+      if(!invDoc){err.textContent='Invalid or expired invite code for this role.';err.style.display='block';btn.disabled=false;btn.textContent='Create account';return;}
+    }
     // Check username
     const usSnap=await getDocs(collection(db,'users'));
     if(usSnap.docs.find(d=>d.data().username&&d.data().username.toLowerCase()===username)){err.textContent='Username already taken.';err.style.display='block';btn.disabled=false;btn.textContent='Create account';return;}
     // Create user
     const pwHash=await sha256(pw);
     const newId='u'+Date.now();
-    const approved=invite.role==='member';
-    await setDoc(doc(db,'users',newId),{username,name,role:invite.role,pwHash,joinedDate:today,approved,createdAt:serverTimestamp()});
-    await updateDoc(doc(db,'invites',invDoc.id),{used:true,usedBy:newId,usedAt:new Date().toISOString()});
+    const approved=role==='member'; // members auto-approved, others need approval
+    await setDoc(doc(db,'users',newId),{username,name,role,pwHash,joinedDate:today,approved,createdAt:serverTimestamp()});
+    if(invDoc) await updateDoc(doc(db,'invites',invDoc.id),{used:true,usedBy:newId,usedAt:new Date().toISOString()});
     if(approved){
-      curUser={id:newId,username,name,role:invite.role,approved};mkSess(newId);closeDlg('loginDlg');
+      curUser={id:newId,username,name,role,approved};mkSess(newId);closeDlg('loginDlg');
       applyRole();startListeners();renderT();renderRep();
     } else {
       ok.textContent='Account created! A Super User needs to approve you before you can sign in.';ok.style.display='block';

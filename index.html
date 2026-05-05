@@ -1147,34 +1147,27 @@ function toggleSchedActCost(i){
 }
 window.toggleSchedActCost=toggleSchedActCost;
 
-async function renderSchedActivityInputs(){
-  // Load members for owner dropdown
-  const usSnap=await getDocs(collection(db,'users'));
-  const members=usSnap.docs.map(d=>({id:d.id,...d.data()})).filter(u=>u.approved);
-  const memberOpts=members.map(u=>`<option value="${san(u.username)}">${san(u.name||u.username)}</option>`).join('');
-
+function renderSchedActivityInputs(){
   const el=document.getElementById('schedActivitiesList');
   if(!el)return;
   if(!schedActivityRows.length){el.innerHTML='<div style="font-size:12px;color:var(--ots-t);padding:8px 0;text-align:center;">No activities added yet. Click "+ Add activity" below.</div>';return;}
-
   el.innerHTML=schedActivityRows.map((a,i)=>`
     <div style="background:var(--sur-c);border-radius:var(--r-s);padding:10px 12px;margin-bottom:8px;border:0.5px solid var(--out-v);">
       <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
         <input type="text" placeholder="Activity name" maxlength="80" value="${san(a.name)}"
           oninput="schedActivityRows[${i}].name=this.value"
-          style="flex:1;padding:7px 10px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:13px;height:36px;"/>
+          style="flex:1;padding:7px 10px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:16px;height:40px;"/>
         <button class="act-rm-btn" onclick="removeSchedActivity(${i})">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
         </button>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <select oninput="schedActivityRows[${i}].owner=this.value"
-          style="flex:1;min-width:120px;padding:6px 8px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:12px;height:34px;">
-          <option value="">Assign owner...</option>${memberOpts}
+        <select id="sched-owner-${i}" onchange="schedActivityRows[${i}].owner=this.value"
+          style="flex:1;min-width:120px;padding:6px 8px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:13px;height:36px;">
+          <option value="">Assign owner...</option>
         </select>
-        <input type="date" oninput="schedActivityRows[${i}].dueDate=this.value"
-          title="Expected completion date"
-          style="flex:1;min-width:120px;padding:6px 8px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:12px;height:34px;"/>
+        <input type="date" id="sched-due-${i}" onchange="schedActivityRows[${i}].dueDate=this.value"
+          style="flex:1;min-width:120px;padding:6px 8px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:13px;height:36px;"/>
         <div style="display:flex;align-items:center;gap:6px;">
           <span style="font-size:11px;color:var(--ots-v);">Cost?</span>
           <button onclick="toggleSchedActCost(${i})"
@@ -1184,9 +1177,23 @@ async function renderSchedActivityInputs(){
         </div>
         ${a.hasCost?`<input type="number" placeholder="Rs amount" min="0" max="999999" value="${a.cost||''}"
           oninput="schedActivityRows[${i}].cost=this.value"
-          style="width:100px;padding:6px 8px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:12px;height:34px;"/>`:''}
+          style="width:100px;padding:6px 8px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:13px;height:36px;"/>`:''}
       </div>
     </div>`).join('');
+
+  // Populate owner dropdowns async
+  getDocs(collection(db,'users')).then(snap=>{
+    const members=snap.docs.map(d=>({id:d.id,...d.data()})).filter(u=>u.approved);
+    const opts=members.map(u=>`<option value="${san(u.username)}">${san(u.name||u.username)}</option>`).join('');
+    schedActivityRows.forEach((_,i)=>{
+      const sel=document.getElementById(`sched-owner-${i}`);
+      if(sel){
+        const cur=schedActivityRows[i].owner;
+        sel.innerHTML='<option value="">Assign owner...</option>'+opts;
+        if(cur)sel.value=cur;
+      }
+    });
+  });
 }
 
 function populateSchedTpl(){
@@ -1211,22 +1218,28 @@ window.loadFromTemplate=loadFromTemplate;
 
 async function scheduleEvent(){
   if(!isCom())return;
+
+  // Read current values from DOM inputs into schedActivityRows
+  schedActivityRows.forEach((_,i)=>{
+    const nameEl=document.querySelector(`#schedActivitiesList .act-name-inp-${i}`);
+    // Names are bound via oninput so already in schedActivityRows
+  });
+
   const name=san(document.getElementById('schedName')?.value||'');
   const date=document.getElementById('schedDate')?.value||'';
   const saveAsTpl=document.getElementById('saveAsTpl')?.checked||false;
   const err=document.getElementById('schedErr');
 
   if(!name||!date){if(err){err.textContent='Please enter a program name and date.';err.style.display='block';}return;}
-  if(!schedActivityRows.length){if(err){err.textContent='Please add at least one activity.';err.style.display='block';}return;}
 
-  const activities=schedActivityRows.filter(a=>a.name.trim()).map(a=>({
+  const activities=schedActivityRows.filter(a=>a.name&&a.name.trim()).map(a=>({
     name:san(a.name),owner:a.owner||'',dueDate:a.dueDate||'',
     cost:a.hasCost?(sanNum(a.cost,0,999999)||0):null,status:'planned'
   }));
+
   if(!activities.length){if(err){err.textContent='Please enter at least one activity name.';err.style.display='block';}return;}
   if(err)err.style.display='none';
 
-  // Save as template if checked
   if(saveAsTpl){
     const tplActivities=activities.map(a=>({name:a.name,hasCost:a.cost!==null,cost:a.cost}));
     await addDoc(collection(db,'eventTemplates'),{name,activities:tplActivities,createdBy:curUser.id,createdAt:serverTimestamp()});

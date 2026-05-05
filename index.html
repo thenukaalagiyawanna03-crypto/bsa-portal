@@ -345,7 +345,6 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
     <button class="ntab" id="navTres" onclick="showTab('tres',this)" style="display:none;">Treasury</button>
     <button class="ntab" id="navRep" onclick="showTab('rep',this)" style="display:none;">Reports</button>
     <button class="ntab" id="navEvents" onclick="showTab('events',this)" style="display:none;">📊 Programs</button>
-    <button class="ntab" id="navTemplates" onclick="showTab('templates',this)" style="display:none;">🗂️ Templates</button>
     <button class="ntab" id="navUsers" onclick="showTab('users',this)" style="display:none;">👥 Users</button>
   </div>
 
@@ -378,7 +377,7 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
       <div style="font-size:11px;font-weight:700;color:var(--ots-v);letter-spacing:0.8px;text-transform:uppercase;margin:16px 0 10px;">Latest notices</div>
       <div id="dashNotices"></div>
       <!-- Top contributors -->
-      <div style="font-size:11px;font-weight:700;color:var(--ots-v);letter-spacing:0.8px;text-transform:uppercase;margin:16px 0 10px;">Top contributors this month</div>
+      <div class="section-label" style="font-size:11px;font-weight:700;color:var(--ots-v);letter-spacing:0.8px;text-transform:uppercase;margin:16px 0 10px;">Top contributor this week</div>
       <div id="dashTop"></div>
     </div>
 
@@ -496,47 +495,48 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
       </div>
     </div>
 
-    <!-- PROGRAM TEMPLATES -->
-    <div class="sec" id="templates">
-      <div id="tplLocked" class="locked" style="display:none;"><div class="locked-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div><div class="locked-h">Access restricted</div><div class="locked-b">Program templates are managed by Committee Members and above.</div><button class="btn btn-f" onclick="toggleLogin()">Sign in</button></div>
-      <div id="tplContent">
-        <div id="tplForm" style="display:none;" class="card-f">
-          <div class="chd"><div class="ct" id="tplFormTitle">Create program template</div></div>
-          <div class="cb">
-            <div class="field"><label>Template name</label><input type="text" id="tplName" maxlength="80" placeholder="e.g. Blood Donation Drive"/></div>
-            <div class="field"><label>Description (optional)</label><textarea id="tplDesc" maxlength="300" placeholder="Brief description of this program type..."></textarea></div>
-            <div style="font-size:11px;color:var(--bsa);font-weight:500;letter-spacing:0.4px;margin-bottom:8px;">ACTIVITIES</div>
-            <div id="tplActivitiesList"></div>
-            <button class="btn btn-o" style="width:100%;margin-bottom:10px;" onclick="addTplActivity()">+ Add activity</button>
-            <div id="tplErr" class="err" style="display:none;"></div>
-            <div class="btn-row"><button class="btn btn-o" onclick="cancelTplForm()">Cancel</button><button class="btn btn-f" onclick="saveTpl()">Save template</button></div>
-          </div>
-        </div>
-        <div id="tplAddBtn"><button class="btn btn-t" style="width:100%;margin-bottom:12px;" onclick="openTplForm()">+ Create program template</button></div>
-        <div class="card"><div class="chd"><div class="ct">Program templates</div></div><div id="tplList" style="padding-bottom:8px;"></div></div>
-      </div>
-    </div>
-
-    <!-- EVENT TRACKING (Programs) -->
+    <!-- PROGRAMS -->
     <div class="sec" id="events">
       <div id="evtTrackLocked" class="locked" style="display:none;"><div class="locked-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg></div><div class="locked-h">Access restricted</div><div class="locked-b">Sign in to view programs.</div><button class="btn btn-f" onclick="toggleLogin()">Sign in</button></div>
       <div id="evtTrackContent">
+
+        <!-- Schedule Form -->
         <div id="schedForm" style="display:none;" class="card-f">
           <div class="chd"><div class="ct">Schedule a program</div></div>
           <div class="cb">
+
+            <!-- Use saved template -->
+            <div id="tplSelectSection">
+              <div style="font-size:11px;color:var(--bsa);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:6px;">Use a saved template (optional)</div>
+              <div style="display:flex;gap:8px;margin-bottom:14px;">
+                <select id="schedTpl" style="flex:1;padding:8px 10px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:13px;height:40px;"><option value="">Start from scratch...</option></select>
+                <button class="btn btn-o" style="height:40px;padding:0 14px;font-size:13px;" onclick="loadFromTemplate()">Load</button>
+              </div>
+            </div>
+
+            <!-- Program details -->
             <div class="frow">
-              <div class="field"><label>Program template</label><select id="schedTpl" onchange="loadSchedActivities()"><option value="">Select template...</option></select></div>
+              <div class="field"><label>Program name</label><input type="text" id="schedName" maxlength="80" placeholder="e.g. Blood Donation Drive"/></div>
               <div class="field"><label>Program date</label><input type="date" id="schedDate"/></div>
             </div>
-            <div id="schedActivitiesSection" style="display:none;">
-              <div style="font-size:11px;color:var(--bsa);font-weight:500;letter-spacing:0.4px;margin-bottom:8px;margin-top:4px;">ASSIGN OWNERS TO ACTIVITIES</div>
-              <div id="schedActivitiesList"></div>
+
+            <!-- Activities -->
+            <div style="font-size:11px;color:var(--bsa);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:8px;margin-top:4px;">Activities</div>
+            <div id="schedActivitiesList"></div>
+            <button class="btn btn-o" style="width:100%;margin-bottom:12px;" onclick="addSchedActivity()">+ Add activity</button>
+
+            <!-- Save as template option -->
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--sur-c);border-radius:var(--r-s);margin-bottom:12px;">
+              <input type="checkbox" id="saveAsTpl" style="width:18px;height:18px;cursor:pointer;accent-color:var(--bsa);"/>
+              <label for="saveAsTpl" style="font-size:13px;color:var(--ots);cursor:pointer;">Save as template for future use</label>
             </div>
+
             <div id="schedErr" class="err" style="display:none;"></div>
-            <div class="btn-row"><button class="btn btn-o" onclick="hide('schedForm')">Cancel</button><button class="btn btn-f" onclick="scheduleEvent()">Schedule program</button></div>
+            <div class="btn-row"><button class="btn btn-o" onclick="hide('schedForm');resetSchedForm()">Cancel</button><button class="btn btn-f" onclick="scheduleEvent()">Schedule program</button></div>
           </div>
         </div>
-        <div id="schedBtn" style="display:none;"><button class="btn btn-t" style="width:100%;margin-bottom:12px;" onclick="show('schedForm');document.getElementById('schedDate').valueAsDate=new Date();">+ Schedule program</button></div>
+
+        <div id="schedBtn" style="display:none;"><button class="btn btn-t" style="width:100%;margin-bottom:12px;" onclick="openSchedForm()">+ Schedule program</button></div>
         <div id="evtTrackList"></div>
         <div class="empty" id="evtTrackEmpty" style="display:none;">No programs scheduled yet.</div>
       </div>
@@ -693,8 +693,7 @@ function startListeners(){
   unsubs.push(onSnapshot(query(collection(db,'deposits'),orderBy('date','desc')),(s)=>{deps=s.docs.map(d=>({id:d.id,...d.data()}));if(isCom())renderT();}));
   unsubs.push(onSnapshot(query(collection(db,'cashlog'),orderBy('date','desc')),(s)=>{hlogs=s.docs.map(d=>({id:d.id,...d.data()}));if(isCom())renderT();}));
   unsubs.push(onSnapshot(doc(db,'config','cashInHand'),(s)=>{hcur=s.exists()?s.data():{amount:0,note:'No reason recorded'};if(isCom()){document.getElementById('handAmt').textContent='Rs '+(hcur.amount||0).toLocaleString();document.getElementById('handNote').textContent=san(hcur.note||'No reason recorded');}}));
-  unsubs.push(onSnapshot(query(collection(db,'eventTemplates'),orderBy('createdAt','desc')),(s)=>{eventTemplates=s.docs.map(d=>({id:d.id,...d.data()}));renderTpls();populateSchedTpl();}));
-  unsubs.push(onSnapshot(query(collection(db,'scheduledEvents'),orderBy('date','asc')),(s)=>{scheduledEvents=s.docs.map(d=>({id:d.id,...d.data()}));renderEvtTrack();renderEvtInCal();renderDashboard();}));
+  unsubs.push(onSnapshot(query(collection(db,'eventTemplates'),orderBy('createdAt','desc')),(s)=>{eventTemplates=s.docs.map(d=>({id:d.id,...d.data()}));populateSchedTpl();}));
 }
 
 // HELPERS
@@ -721,7 +720,6 @@ function applyRole(){
   document.getElementById('navTres').style.display=isCom()?'block':'none';
   document.getElementById('navRep').style.display=isCom()?'block':'none';
   document.getElementById('navEvents').style.display=isMem()?'block':'none';
-  document.getElementById('navTemplates').style.display=isCom()?'block':'none';
   document.getElementById('navUsers').style.display=isSU()?'block':'none';
   document.getElementById('asmBtn').style.display=isCom()?'block':'none';
   document.getElementById('partBtn').style.display=isSU()&&activeTab==='gatha'?'block':'none';
@@ -746,7 +744,7 @@ function showTab(id,btn){
   if(id==='part'){renderGathaLb();renderGathaLog();renderPinLb();renderPinLog();renderFb();}
   if(id==='users')renderUsers();
   if(id==='events')renderEvtTrack();
-  if(id==='templates')renderTpls();
+  if(id==='events'){renderEvtTrack();populateSchedTpl();}
   if(id==='home')renderDashboard();
 }
 window.showTab=showTab;
@@ -1106,172 +1104,141 @@ async function doSignup(){
 window.doSignup=doSignup;
 
 // ═══════════════════════════════════════════════════
-//  EVENT MANAGEMENT
+//  PROGRAM MANAGEMENT (Schedule + Templates combined)
 // ═══════════════════════════════════════════════════
 
-// ── TEMPLATE ACTIVITIES (local state while building form) ──
-let tplActivityRows=[];
+let schedActivityRows=[];
 
-function openTplForm(){
+function openSchedForm(){
   if(!isCom())return;
-  tplActivityRows=[];
-  document.getElementById('tplName').value='';
-  document.getElementById('tplDesc').value='';
-  document.getElementById('tplErr').style.display='none';
-  document.getElementById('tplFormTitle').textContent='Create event template';
-  renderTplActivityInputs();
-  show('tplForm');
-  hide('tplAddBtn');
+  resetSchedForm();
+  populateSchedTpl();
+  document.getElementById('schedDate').valueAsDate=new Date();
+  show('schedForm');
 }
-window.openTplForm=openTplForm;
+window.openSchedForm=openSchedForm;
 
-function cancelTplForm(){
-  hide('tplForm');
-  show('tplAddBtn');
-  tplActivityRows=[];
+function resetSchedForm(){
+  schedActivityRows=[];
+  if(document.getElementById('schedName'))document.getElementById('schedName').value='';
+  if(document.getElementById('schedTpl'))document.getElementById('schedTpl').value='';
+  if(document.getElementById('saveAsTpl'))document.getElementById('saveAsTpl').checked=false;
+  if(document.getElementById('schedErr'))document.getElementById('schedErr').style.display='none';
+  renderSchedActivityInputs();
 }
-window.cancelTplForm=cancelTplForm;
+window.resetSchedForm=resetSchedForm;
 
-function addTplActivity(){
-  tplActivityRows.push({name:'',hasCost:false,cost:''});
-  renderTplActivityInputs();
+function addSchedActivity(){
+  schedActivityRows.push({name:'',owner:'',dueDate:'',hasCost:false,cost:''});
+  renderSchedActivityInputs();
 }
-window.addTplActivity=addTplActivity;
+window.addSchedActivity=addSchedActivity;
 
-function toggleActCost(i){
-  tplActivityRows[i].hasCost=!tplActivityRows[i].hasCost;
-  if(!tplActivityRows[i].hasCost)tplActivityRows[i].cost='';
-  renderTplActivityInputs();
+function removeSchedActivity(i){
+  schedActivityRows.splice(i,1);
+  renderSchedActivityInputs();
 }
-window.toggleActCost=toggleActCost;
+window.removeSchedActivity=removeSchedActivity;
 
-function removeTplActivity(i){
-  tplActivityRows.splice(i,1);
-  renderTplActivityInputs();
+function toggleSchedActCost(i){
+  schedActivityRows[i].hasCost=!schedActivityRows[i].hasCost;
+  if(!schedActivityRows[i].hasCost)schedActivityRows[i].cost='';
+  renderSchedActivityInputs();
 }
-window.removeTplActivity=removeTplActivity;
+window.toggleSchedActCost=toggleSchedActCost;
 
-function renderTplActivityInputs(){
-  document.getElementById('tplActivitiesList').innerHTML=tplActivityRows.map((a,i)=>`
-    <div class="act-input-row" style="flex-wrap:wrap;">
-      <input type="text" placeholder="Activity name (e.g. Registration)" maxlength="80" value="${san(a.name)}" oninput="tplActivityRows[${i}].name=this.value" style="flex:1;min-width:160px;padding:8px 10px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:13px;height:38px;"/>
-      <div style="display:flex;align-items:center;gap:6px;height:38px;">
-        <span style="font-size:12px;color:var(--ots-v);">Has cost?</span>
-        <button onclick="toggleActCost(${i})" style="padding:4px 12px;border-radius:var(--r-f);border:1px solid var(--out-v);background:${a.hasCost?'var(--bsa)':'var(--sur)'};color:${a.hasCost?'#fff':'var(--ots-v)'};font-size:12px;font-weight:600;cursor:pointer;height:32px;">${a.hasCost?'Yes':'No'}</button>
+async function renderSchedActivityInputs(){
+  // Load members for owner dropdown
+  const usSnap=await getDocs(collection(db,'users'));
+  const members=usSnap.docs.map(d=>({id:d.id,...d.data()})).filter(u=>u.approved);
+  const memberOpts=members.map(u=>`<option value="${san(u.username)}">${san(u.name||u.username)}</option>`).join('');
+
+  const el=document.getElementById('schedActivitiesList');
+  if(!el)return;
+  if(!schedActivityRows.length){el.innerHTML='<div style="font-size:12px;color:var(--ots-t);padding:8px 0;text-align:center;">No activities added yet. Click "+ Add activity" below.</div>';return;}
+
+  el.innerHTML=schedActivityRows.map((a,i)=>`
+    <div style="background:var(--sur-c);border-radius:var(--r-s);padding:10px 12px;margin-bottom:8px;border:0.5px solid var(--out-v);">
+      <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
+        <input type="text" placeholder="Activity name" maxlength="80" value="${san(a.name)}"
+          oninput="schedActivityRows[${i}].name=this.value"
+          style="flex:1;padding:7px 10px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:13px;height:36px;"/>
+        <button class="act-rm-btn" onclick="removeSchedActivity(${i})">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+        </button>
       </div>
-      ${a.hasCost?`<input type="number" placeholder="Amount (Rs)" min="0" max="999999" value="${a.cost||''}" oninput="tplActivityRows[${i}].cost=this.value" style="width:120px;padding:8px 10px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:13px;height:38px;"/>`:``}
-      <button class="act-rm-btn" onclick="removeTplActivity(${i})"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <select oninput="schedActivityRows[${i}].owner=this.value"
+          style="flex:1;min-width:120px;padding:6px 8px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:12px;height:34px;">
+          <option value="">Assign owner...</option>${memberOpts}
+        </select>
+        <input type="date" oninput="schedActivityRows[${i}].dueDate=this.value"
+          title="Expected completion date"
+          style="flex:1;min-width:120px;padding:6px 8px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:12px;height:34px;"/>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:11px;color:var(--ots-v);">Cost?</span>
+          <button onclick="toggleSchedActCost(${i})"
+            style="padding:4px 10px;border-radius:var(--r-f);border:1px solid var(--out-v);background:${a.hasCost?'var(--bsa)':'var(--sur)'};color:${a.hasCost?'#fff':'var(--ots-v)'};font-size:11px;font-weight:600;cursor:pointer;height:28px;">
+            ${a.hasCost?'Yes':'No'}
+          </button>
+        </div>
+        ${a.hasCost?`<input type="number" placeholder="Rs amount" min="0" max="999999" value="${a.cost||''}"
+          oninput="schedActivityRows[${i}].cost=this.value"
+          style="width:100px;padding:6px 8px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:12px;height:34px;"/>`:''}
+      </div>
     </div>`).join('');
 }
 
-async function saveTpl(){
-  if(!isCom())return;
-  const name=san(document.getElementById('tplName').value);
-  const desc=san(document.getElementById('tplDesc').value);
-  const err=document.getElementById('tplErr');
-  if(!name){err.textContent='Please enter a template name.';err.style.display='block';return;}
-  if(tplActivityRows.length===0){err.textContent='Please add at least one activity.';err.style.display='block';return;}
-  const activities=tplActivityRows.filter(a=>a.name.trim()).map(a=>({name:san(a.name),hasCost:a.hasCost,cost:a.hasCost?(sanNum(a.cost,0,999999)||0):null}));
-  if(activities.length===0){err.textContent='Please enter at least one activity name.';err.style.display='block';return;}
-  err.style.display='none';
-  await addDoc(collection(db,'eventTemplates'),{name,desc,activities,createdBy:curUser.id,createdAt:serverTimestamp()});
-  cancelTplForm();
-}
-window.saveTpl=saveTpl;
-
-function renderTpls(){
-  const el=document.getElementById('tplList');
-  if(!el)return;
-  if(!isCom()){document.getElementById('tplLocked').style.display='block';document.getElementById('tplContent').style.display='none';return;}
-  document.getElementById('tplLocked').style.display='none';document.getElementById('tplContent').style.display='block';
-  if(!eventTemplates.length){el.innerHTML='<div class="empty">No templates yet. Create one above!</div>';return;}
-  el.innerHTML=eventTemplates.map(t=>{
-    const totalCost=t.activities.reduce((s,a)=>s+(a.cost||0),0);
-    return`<div class="tpl-card">
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;">
-        <div>
-          <div class="tpl-name">${san(t.name)}</div>
-          ${t.desc?`<div class="tpl-desc">${san(t.desc)}</div>`:''}
-          ${totalCost>0?`<div style="font-size:11px;color:var(--bsa);font-weight:500;margin-top:4px;">Budget estimate: Rs ${totalCost.toLocaleString()}</div>`:''}
-        </div>
-        <button class="del-btn" onclick="askDelTpl('${t.id}','${san(t.name).replace(/'/g,"\\'")}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Delete</button>
-      </div>
-      <div class="tpl-acts">
-        ${(t.activities||[]).map(a=>`<div class="tpl-act-row"><span>📌 ${san(a.name)}</span>${a.cost?`<span class="tpl-act-cost">Rs ${a.cost.toLocaleString()}</span>`:''}</div>`).join('')}
-      </div>
-    </div>`;
-  }).join('');
-}
-window.renderTpls=renderTpls;
-
-async function askDelTpl(id,name){
-  if(!isCom())return;
-  askDel(`Delete template "${name}"?`,async()=>{await deleteDoc(doc(db,'eventTemplates',id));});
-}
-window.askDelTpl=askDelTpl;
-
-// ── SCHEDULE EVENTS ──
 function populateSchedTpl(){
   const sel=document.getElementById('schedTpl');
   if(!sel)return;
-  const cur=sel.value;
-  sel.innerHTML='<option value="">Select template...</option>'+eventTemplates.map(t=>`<option value="${t.id}" ${t.id===cur?'selected':''}>${san(t.name)}</option>`).join('');
+  sel.innerHTML='<option value="">Start from scratch...</option>'+
+    eventTemplates.map(t=>`<option value="${t.id}">${san(t.name)}</option>`).join('');
 }
 
-async function loadSchedActivities(){
+function loadFromTemplate(){
   const tplId=document.getElementById('schedTpl').value;
-  const sec=document.getElementById('schedActivitiesSection');
-  if(!tplId){sec.style.display='none';return;}
+  if(!tplId)return;
   const tpl=eventTemplates.find(t=>t.id===tplId);
-  if(!tpl){sec.style.display='none';return;}
-  // Load users for dropdown
-  const usSnap=await getDocs(collection(db,'users'));
-  const members=usSnap.docs.map(d=>({id:d.id,...d.data()})).filter(u=>u.approved);
-  const memberOptions=members.map(u=>`<option value="${san(u.username)}">${san(u.name||u.username)}</option>`).join('');
-  document.getElementById('schedActivitiesList').innerHTML=(tpl.activities||[]).map((a,i)=>`
-    <div class="sched-act-row">
-      <div class="sched-act-name">📌 ${san(a.name)}${a.cost?` <span style="font-size:11px;color:var(--ots-v);">(Rs ${a.cost.toLocaleString()})</span>`:''}</div>
-      <div class="sched-act-fields">
-        <select id="schedOwner${i}"><option value="">Assign owner...</option>${memberOptions}</select>
-        <input type="date" id="schedDue${i}" placeholder="Expected completion date"/>
-        <input type="number" id="schedCost${i}" placeholder="Cost Rs (optional)" min="0" max="999999" value="${a.cost||''}"/>
-      </div>
-    </div>`).join('');
-  sec.style.display='block';
+  if(!tpl)return;
+  // Pre-fill name
+  if(document.getElementById('schedName'))document.getElementById('schedName').value=tpl.name;
+  // Pre-fill activities
+  schedActivityRows=(tpl.activities||[]).map(a=>({name:a.name,owner:'',dueDate:'',hasCost:a.hasCost||false,cost:a.cost||''}));
+  renderSchedActivityInputs();
 }
-window.loadSchedActivities=loadSchedActivities;
+window.loadFromTemplate=loadFromTemplate;
 
 async function scheduleEvent(){
   if(!isCom())return;
-  const tplId=document.getElementById('schedTpl').value;
-  const date=document.getElementById('schedDate').value;
+  const name=san(document.getElementById('schedName')?.value||'');
+  const date=document.getElementById('schedDate')?.value||'';
+  const saveAsTpl=document.getElementById('saveAsTpl')?.checked||false;
   const err=document.getElementById('schedErr');
-  if(!tplId||!date){err.textContent='Please select a template and date.';err.style.display='block';return;}
-  const tpl=eventTemplates.find(t=>t.id===tplId);
-  if(!tpl){err.textContent='Template not found.';err.style.display='block';return;}
-  err.style.display='none';
-  const activities=(tpl.activities||[]).map((a,i)=>({
-    name:a.name,
-    owner:document.getElementById(`schedOwner${i}`)?.value||'',
-    dueDate:document.getElementById(`schedDue${i}`)?.value||'',
-    cost:sanNum(document.getElementById(`schedCost${i}`)?.value||'',0,999999),
-    status:'planned'
+
+  if(!name||!date){if(err){err.textContent='Please enter a program name and date.';err.style.display='block';}return;}
+  if(!schedActivityRows.length){if(err){err.textContent='Please add at least one activity.';err.style.display='block';}return;}
+
+  const activities=schedActivityRows.filter(a=>a.name.trim()).map(a=>({
+    name:san(a.name),owner:a.owner||'',dueDate:a.dueDate||'',
+    cost:a.hasCost?(sanNum(a.cost,0,999999)||0):null,status:'planned'
   }));
-  await addDoc(collection(db,'scheduledEvents'),{
-    name:tpl.name,templateId:tplId,date,activities,
-    createdBy:curUser.id,createdAt:serverTimestamp()
-  });
+  if(!activities.length){if(err){err.textContent='Please enter at least one activity name.';err.style.display='block';}return;}
+  if(err)err.style.display='none';
+
+  // Save as template if checked
+  if(saveAsTpl){
+    const tplActivities=activities.map(a=>({name:a.name,hasCost:a.cost!==null,cost:a.cost}));
+    await addDoc(collection(db,'eventTemplates'),{name,activities:tplActivities,createdBy:curUser.id,createdAt:serverTimestamp()});
+  }
+
+  await addDoc(collection(db,'scheduledEvents'),{name,date,activities,createdBy:curUser.id,createdAt:serverTimestamp()});
   hide('schedForm');
-  document.getElementById('schedTpl').value='';
-  document.getElementById('schedActivitiesSection').style.display='none';
+  resetSchedForm();
 }
 window.scheduleEvent=scheduleEvent;
 
-// ── RENDER EVENT TRACKING ──
 function renderEvtTrack(){
-  const el=document.getElementById('evtTrackList');
-  const empty=document.getElementById('evtTrackEmpty');
-  if(!el)return;
   if(!isMem()){
     document.getElementById('evtTrackLocked').style.display='block';
     document.getElementById('evtTrackContent').style.display='none';
@@ -1281,80 +1248,73 @@ function renderEvtTrack(){
   document.getElementById('evtTrackContent').style.display='block';
   document.getElementById('schedBtn').style.display=isCom()?'block':'none';
 
-  // Filter events based on role
-  let visibleEvents=scheduledEvents;
-  if(!isCom()){
-    // Members only see events where they're assigned to at least one activity
-    visibleEvents=scheduledEvents.filter(e=>(e.activities||[]).some(a=>a.owner===curUser.username));
-  }
+  let visible=scheduledEvents;
+  if(!isCom())visible=scheduledEvents.filter(e=>(e.activities||[]).some(a=>a.owner===curUser?.username));
 
-  if(!visibleEvents.length){empty.style.display='block';el.innerHTML='';return;}
-  empty.style.display='none';
+  const listEl=document.getElementById('evtTrackList');
+  const emptyEl=document.getElementById('evtTrackEmpty');
+  if(!listEl)return;
 
-  el.innerHTML=visibleEvents.map(evt=>{
+  if(!visible.length){listEl.innerHTML='';if(emptyEl)emptyEl.style.display='block';return;}
+  if(emptyEl)emptyEl.style.display='none';
+
+  listEl.innerHTML=visible.map(evt=>{
     const acts=evt.activities||[];
     const totalCost=acts.reduce((s,a)=>s+(a.cost||0),0);
     const done=acts.filter(a=>a.status==='done').length;
     const progress=acts.length?Math.round(done/acts.length*100):0;
-
     return`<div class="evt-track-card">
       <div class="evt-track-header">
-        <div>
+        <div style="flex:1;min-width:0;">
           <div class="evt-track-name">${san(evt.name)}</div>
           <div class="evt-track-date">📅 ${fd(evt.date)}</div>
-          <div class="progress-bar"><div class="progress-fill" style="width:${progress}%"></div></div>
+          <div class="progress-bar" style="margin-top:8px;"><div class="progress-fill" style="width:${progress}%"></div></div>
           <div style="font-size:10px;color:rgba(255,255,255,0.7);margin-top:3px;">${done}/${acts.length} activities done</div>
         </div>
-        <div style="text-align:right;">
+        <div style="text-align:right;flex-shrink:0;">
           ${totalCost>0?`<div class="evt-track-budget">Budget: Rs ${totalCost.toLocaleString()}</div>`:''}
-          ${isCom()?`<button class="del-btn" style="border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;margin-top:6px;" onclick="askDelSchedEvt('${evt.id}','${san(evt.name).replace(/'/g,"\\'")}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Delete</button>`:''}
+          ${isCom()?`<button class="del-btn" style="border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;margin-top:8px;" onclick="askDelSchedEvt('${evt.id}','${san(evt.name).replace(/'/g,"\\'")}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Delete</button>`:''}
         </div>
       </div>
       ${acts.map((a,i)=>{
         const isOwner=a.owner===curUser?.username;
         const canEdit=isCom()||isOwner;
-        const statusColors={planned:'planned',inprogress:'inprogress',done:'done'};
+        const sc={planned:'planned',inprogress:'inprogress',done:'done'};
         return`<div class="evt-act-item">
           <div class="evt-act-info">
             <div class="evt-act-name">${san(a.name)}</div>
-            ${a.owner?`<div class="evt-act-owner">👤 ${san(a.owner)}</div>`:'<div class="evt-act-owner" style="color:#B3261E;">⚠ No owner assigned</div>'}
+            ${a.owner?`<div class="evt-act-owner">👤 ${san(a.owner)}</div>`:'<div class="evt-act-owner" style="color:var(--red);">⚠ No owner assigned</div>'}
             ${a.dueDate?`<div class="evt-act-due">📅 Due: ${fd(a.dueDate)}</div>`:''}
-            ${a.cost?`<div class="evt-act-cost-lbl">💰 Rs ${a.cost.toLocaleString()}</div>`:''}
+            ${a.cost?`<div class="evt-act-cost">💰 Rs ${a.cost.toLocaleString()}</div>`:''}
           </div>
           <div>
-            ${canEdit
-              ?`<select class="status-select ${statusColors[a.status]||'planned'}" onchange="updateActStatus('${evt.id}',${i},this.value)">
-                  <option value="planned" ${a.status==='planned'?'selected':''}>📋 Planned</option>
-                  <option value="inprogress" ${a.status==='inprogress'?'selected':''}>⚙️ In Progress</option>
-                  <option value="done" ${a.status==='done'?'selected':''}>✅ Done</option>
-                </select>`
-              :`<span class="status-badge ${statusColors[a.status]||'planned'}">${a.status==='planned'?'📋 Planned':a.status==='inprogress'?'⚙️ In Progress':'✅ Done'}</span>`
-            }
+            ${canEdit?`<select class="status-select ${sc[a.status]||'planned'}" onchange="updateActStatus('${evt.id}',${i},this.value)">
+              <option value="planned" ${a.status==='planned'?'selected':''}>📋 Planned</option>
+              <option value="inprogress" ${a.status==='inprogress'?'selected':''}>⚙️ In Progress</option>
+              <option value="done" ${a.status==='done'?'selected':''}>✅ Done</option>
+            </select>`:`<span class="status-badge ${sc[a.status]||'planned'}">${a.status==='planned'?'📋 Planned':a.status==='inprogress'?'⚙️ In Progress':'✅ Done'}</span>`}
           </div>
         </div>`;
       }).join('')}
-      ${totalCost>0?`<div class="evt-budget-row"><span class="evt-budget-lbl">Total event budget</span><span class="evt-budget-amt">Rs ${totalCost.toLocaleString()}</span></div>`:''}
+      ${totalCost>0?`<div class="evt-budget-row"><span class="evt-budget-label">Total budget</span><span class="evt-budget-amount">Rs ${totalCost.toLocaleString()}</span></div>`:''}
     </div>`;
   }).join('');
 }
 window.renderEvtTrack=renderEvtTrack;
 
 async function updateActStatus(evtId,actIdx,newStatus){
-  const evt=scheduledEvents.find(e=>e.id===evtId);
-  if(!evt)return;
-  const acts=[...evt.activities];
-  acts[actIdx]={...acts[actIdx],status:newStatus};
+  const evt=scheduledEvents.find(e=>e.id===evtId);if(!evt)return;
+  const acts=[...evt.activities];acts[actIdx]={...acts[actIdx],status:newStatus};
   await updateDoc(doc(db,'scheduledEvents',evtId),{activities:acts});
 }
 window.updateActStatus=updateActStatus;
 
 async function askDelSchedEvt(id,name){
   if(!isCom())return;
-  askDel(`Delete scheduled event "${name}"?`,async()=>{await deleteDoc(doc(db,'scheduledEvents',id));});
+  askDel(`Delete program "${name}"?`,async()=>{await deleteDoc(doc(db,'scheduledEvents',id));});
 }
 window.askDelSchedEvt=askDelSchedEvt;
 
-// Show scheduled events in calendar tab (name + date only)
 function renderEvtInCal(){
   const el=document.getElementById('scheduledEvtInCal');
   if(!el)return;
@@ -1505,14 +1465,14 @@ function renderDashboard(){
     ?recentN.map(n=>`<div class="notif-card" style="border-left:4px solid ${n.priority==='urgent'?'#B3261E':n.priority==='important'?'#E37400':'#1565C0'};"><div class="notif-icon">${n.priority==='urgent'?'🔴':n.priority==='important'?'🟡':'🔵'}</div><div class="notif-body"><div class="notif-title">${san(n.title)}</div><div class="notif-sub">${fd(n.date)}</div></div></div>`).join('')
     :'<div class="empty" style="background:var(--sur);border-radius:var(--r-m);padding:16px;">No notices yet.</div>';
 
-  // Top contributors
-  const now2=new Date(),mStart=new Date(now2.getFullYear(),now2.getMonth(),1);
-  const monthParts=parts.filter(p=>new Date(p.date+'T00:00:00')>=mStart);
-  const sc={};monthParts.forEach(p=>{sc[p.name]=(sc[p.name]||0)+(POINTS[p.gatha]||2);});
+  // Top contributor this week
+  const now2=new Date(),weekAgo2=new Date(now2.getTime()-7*864e5);
+  const weekParts=parts.filter(p=>new Date(p.date+'T00:00:00')>=weekAgo2);
+  const sc={};weekParts.forEach(p=>{sc[p.name]=(sc[p.name]||0)+(POINTS[p.gatha]||2);});
   const top3=Object.entries(sc).sort((a,b)=>b[1]-a[1]).slice(0,3);
   const medals=['🥇','🥈','🥉'];
   document.getElementById('dashTop').innerHTML=top3.length
-    ?`<div class="card">${top3.map(([name,pts],i)=>`<div class="li"><div style="font-size:22px;">${medals[i]}</div><div class="li-body"><div class="li-t">${san(name)}</div><div class="li-s">This month</div></div><div class="li-r"><span style="font-size:13px;font-weight:700;color:var(--bsa);background:var(--bsa-c);padding:4px 10px;border-radius:var(--r-f);">${pts}pts</span></div></div>`).join('')}</div>`
+    ?`<div class="card">${top3.map(([name,pts],i)=>`<div class="li"><div style="font-size:22px;">${medals[i]}</div><div class="li-body"><div class="li-t">${san(name)}</div><div class="li-s">This week · ${pts}pts</div></div><div class="li-r"><span style="font-size:13px;font-weight:700;color:var(--bsa);background:var(--bsa-c);padding:4px 10px;border-radius:var(--r-f);">${pts}pts</span></div></div>`).join('')}</div>`
     :'<div class="empty" style="background:var(--sur);border-radius:var(--r-m);padding:16px;">No gatha entries this month yet.</div>';
 
   // Notification bell visibility

@@ -1128,19 +1128,35 @@ function resetSchedForm(){
 }
 window.resetSchedForm=resetSchedForm;
 
+function saveCurrentInputs(){
+  schedActivityRows.forEach((_,i)=>{
+    const nameEl=document.querySelector(`[data-act-name="${i}"]`);
+    const costEl=document.querySelector(`[data-act-cost="${i}"]`);
+    const ownerEl=document.getElementById(`sched-owner-${i}`);
+    const dueEl=document.getElementById(`sched-due-${i}`);
+    if(nameEl)schedActivityRows[i].name=nameEl.value;
+    if(costEl)schedActivityRows[i].cost=costEl.value;
+    if(ownerEl)schedActivityRows[i].owner=ownerEl.value;
+    if(dueEl)schedActivityRows[i].dueDate=dueEl.value;
+  });
+}
+
 function addSchedActivity(){
+  saveCurrentInputs();
   schedActivityRows.push({name:'',owner:'',dueDate:'',hasCost:false,cost:''});
   renderSchedActivityInputs();
 }
 window.addSchedActivity=addSchedActivity;
 
 function removeSchedActivity(i){
+  saveCurrentInputs();
   schedActivityRows.splice(i,1);
   renderSchedActivityInputs();
 }
 window.removeSchedActivity=removeSchedActivity;
 
 function toggleSchedActCost(i){
+  saveCurrentInputs();
   schedActivityRows[i].hasCost=!schedActivityRows[i].hasCost;
   if(!schedActivityRows[i].hasCost)schedActivityRows[i].cost='';
   renderSchedActivityInputs();
@@ -1155,6 +1171,7 @@ function renderSchedActivityInputs(){
     <div style="background:var(--sur-c);border-radius:var(--r-s);padding:10px 12px;margin-bottom:8px;border:0.5px solid var(--out-v);">
       <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
         <input type="text" placeholder="Activity name" maxlength="80" value="${san(a.name)}"
+          data-act-name="${i}"
           oninput="schedActivityRows[${i}].name=this.value"
           style="flex:1;padding:7px 10px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:16px;height:40px;"/>
         <button class="act-rm-btn" onclick="removeSchedActivity(${i})">
@@ -1176,6 +1193,7 @@ function renderSchedActivityInputs(){
           </button>
         </div>
         ${a.hasCost?`<input type="number" placeholder="Rs amount" min="0" max="999999" value="${a.cost||''}"
+          data-act-cost="${i}"
           oninput="schedActivityRows[${i}].cost=this.value"
           style="width:100px;padding:6px 8px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:13px;height:36px;"/>`:''}
       </div>
@@ -1218,13 +1236,7 @@ window.loadFromTemplate=loadFromTemplate;
 
 async function scheduleEvent(){
   if(!isCom())return;
-
-  // Read current values from DOM inputs into schedActivityRows
-  schedActivityRows.forEach((_,i)=>{
-    const nameEl=document.querySelector(`#schedActivitiesList .act-name-inp-${i}`);
-    // Names are bound via oninput so already in schedActivityRows
-  });
-
+  saveCurrentInputs();
   const name=san(document.getElementById('schedName')?.value||'');
   const date=document.getElementById('schedDate')?.value||'';
   const saveAsTpl=document.getElementById('saveAsTpl')?.checked||false;

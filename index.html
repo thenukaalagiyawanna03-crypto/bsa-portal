@@ -508,26 +508,51 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
     <!-- MEETING MINUTES -->
     <div class="sec" id="minutes">
       <div id="minLocked" class="locked" style="display:none;">
-        <div class="locked-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+        <div class="locked-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
         <div class="locked-h">Access restricted</div>
         <div class="locked-b">Meeting minutes are for Committee Members and above.</div>
         <button class="btn btn-f" onclick="toggleLogin()">Sign in</button>
       </div>
       <div id="minContent" style="display:none;">
+
         <!-- Add minutes form -->
         <div id="minForm" style="display:none;" class="card-f">
-          <div class="chd"><div class="ct">Add meeting minutes</div></div>
+          <div class="chd"><div class="ct">📝 New meeting minutes</div></div>
           <div class="cb">
+
+            <!-- Date + Time row -->
             <div class="frow">
               <div class="field"><label>Meeting date</label><input type="date" id="minDate"/></div>
-              <div class="field"><label>Meeting time</label><input type="time" id="minTime"/></div>
+              <div class="field"><label>Time</label><input type="time" id="minTime"/></div>
             </div>
+
+            <!-- Attendees -->
+            <div class="field">
+              <label>Attendees</label>
+              <input type="text" id="minAttendees" maxlength="500" placeholder="e.g. Thenuka, Kavindu, Sithum..."/>
+            </div>
+
+            <!-- Agenda items — dynamic list -->
+            <div style="font-size:11px;color:var(--bsa);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:8px;">📋 Agenda items</div>
+            <div id="minAgendaList"></div>
+            <button class="btn btn-o" style="width:100%;margin-bottom:12px;font-size:13px;" onclick="addMinItem('agenda')">+ Add agenda item</button>
+
+            <!-- Decisions — dynamic list -->
+            <div style="font-size:11px;color:var(--bsa);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:8px;">✅ Decisions made</div>
+            <div id="minDecisionsList"></div>
+            <button class="btn btn-o" style="width:100%;margin-bottom:12px;font-size:13px;" onclick="addMinItem('decisions')">+ Add decision</button>
+
+            <!-- Action items — dynamic list -->
+            <div style="font-size:11px;color:var(--bsa);font-weight:600;letter-spacing:0.4px;text-transform:uppercase;margin-bottom:8px;">⚡ Action items</div>
+            <div id="minActionsList"></div>
+            <button class="btn btn-o" style="width:100%;margin-bottom:12px;font-size:13px;" onclick="addMinItem('actions')">+ Add action item</button>
+
+            <!-- Next meeting -->
             <div class="field"><label>Next meeting date (optional)</label><input type="date" id="minNextDate"/></div>
-            <div class="field"><label>Attendees</label><textarea id="minAttendees" maxlength="500" placeholder="e.g. Thenuka, Kavindu, Sithum, Teacher in Charge..."></textarea></div>
-            <div class="field"><label>Agenda items discussed</label><textarea id="minAgenda" maxlength="1000" placeholder="1. Opening prayer&#10;2. Review of last meeting&#10;3. ..."></textarea></div>
-            <div class="field"><label>Decisions made</label><textarea id="minDecisions" maxlength="1000" placeholder="1. Agreed to hold Blood Donation on May 15&#10;2. ..."></textarea></div>
-            <div class="field"><label>Action items</label><textarea id="minActions" maxlength="1000" placeholder="1. Thenuka — prepare registration forms by May 10&#10;2. Kavindu — book the hall by May 8&#10;3. ..."></textarea></div>
-            <div class="field"><label>Additional notes (optional)</label><textarea id="minNotes" maxlength="500" placeholder="Any other notes..."></textarea></div>
+
+            <!-- Notes -->
+            <div class="field"><label>Additional notes (optional)</label><textarea id="minNotes" maxlength="400" placeholder="Any other notes..." style="height:60px;"></textarea></div>
+
             <div id="minErr" class="err" style="display:none;"></div>
             <div class="btn-row">
               <button class="btn btn-o" onclick="hide('minForm');show('minAddBtn')">Cancel</button>
@@ -535,7 +560,8 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
             </div>
           </div>
         </div>
-        <div id="minAddBtn"><button class="btn btn-t" style="width:100%;margin-bottom:12px;" onclick="show('minForm');hide('minAddBtn');document.getElementById('minDate').valueAsDate=new Date();">+ Add meeting minutes</button></div>
+
+        <div id="minAddBtn"><button class="btn btn-t" style="width:100%;margin-bottom:12px;" onclick="openMinForm()">+ Add meeting minutes</button></div>
         <div id="minList"></div>
         <div class="empty" id="minEmpty" style="display:none;">No minutes recorded yet.</div>
       </div>
@@ -1557,36 +1583,94 @@ window.renderDashboard=renderDashboard;
 //  MEETING MINUTES
 // ═══════════════════════════════════════════════════
 
+let minItems={agenda:[],decisions:[],actions:[]};
+
+function openMinForm(){
+  minItems={agenda:[],decisions:[],actions:[]};
+  document.getElementById('minDate').valueAsDate=new Date();
+  document.getElementById('minTime').value='';
+  document.getElementById('minAttendees').value='';
+  document.getElementById('minNextDate').value='';
+  document.getElementById('minNotes').value='';
+  document.getElementById('minErr').style.display='none';
+  renderMinItems();
+  hide('minAddBtn');
+  show('minForm');
+}
+window.openMinForm=openMinForm;
+
+function addMinItem(type){
+  saveMinItemInputs();
+  minItems[type].push('');
+  renderMinItems();
+}
+window.addMinItem=addMinItem;
+
+function removeMinItem(type,i){
+  saveMinItemInputs();
+  minItems[type].splice(i,1);
+  renderMinItems();
+}
+window.removeMinItem=removeMinItem;
+
+function saveMinItemInputs(){
+  ['agenda','decisions','actions'].forEach(type=>{
+    minItems[type].forEach((_,i)=>{
+      const el=document.querySelector(`[data-min-${type}="${i}"]`);
+      if(el)minItems[type][i]=el.value;
+    });
+  });
+}
+
+function renderMinItems(){
+  ['agenda','decisions','actions'].forEach(type=>{
+    const el=document.getElementById(`min${type.charAt(0).toUpperCase()+type.slice(1)}List`);
+    if(!el)return;
+    el.innerHTML=minItems[type].map((val,i)=>`
+      <div style="display:flex;gap:8px;margin-bottom:8px;align-items:center;">
+        <div style="width:22px;height:22px;border-radius:50%;background:var(--bsa-c);color:var(--bsa);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;">${i+1}</div>
+        <input type="text" data-min-${type}="${i}" value="${san(val)}" maxlength="300"
+          placeholder="${type==='agenda'?'Agenda item...':type==='decisions'?'Decision made...':'Who does what by when...'}"
+          oninput="minItems['${type}'][${i}]=this.value"
+          style="flex:1;padding:8px 10px;border:0.5px solid var(--out-v);border-radius:var(--r-s);background:var(--sur);color:var(--ots);font-size:16px;height:40px;"/>
+        <button onclick="removeMinItem('${type}',${i})" style="width:32px;height:40px;border-radius:var(--r-s);border:1px solid #f5c6cb;background:#fff5f5;color:var(--red);cursor:pointer;flex-shrink:0;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+        </button>
+      </div>`).join('');
+  });
+}
+
 async function saveMinutes(){
   if(!isCom())return;
+  saveMinItemInputs();
+
   const date=document.getElementById('minDate').value;
   const time=document.getElementById('minTime').value;
   const nextDate=document.getElementById('minNextDate').value;
   const attendees=san(document.getElementById('minAttendees').value);
-  const agenda=san(document.getElementById('minAgenda').value);
-  const decisions=san(document.getElementById('minDecisions').value);
-  const actions=san(document.getElementById('minActions').value);
   const notes=san(document.getElementById('minNotes').value);
   const err=document.getElementById('minErr');
 
-  if(!date||!attendees||!agenda||!decisions){
-    err.textContent='Please fill in date, attendees, agenda and decisions.';
-    err.style.display='block';return;
-  }
+  const agenda=minItems.agenda.filter(x=>x.trim());
+  const decisions=minItems.decisions.filter(x=>x.trim());
+  const actions=minItems.actions.filter(x=>x.trim());
+
+  if(!date||!attendees){err.textContent='Please enter date and attendees.';err.style.display='block';return;}
+  if(!agenda.length){err.textContent='Please add at least one agenda item.';err.style.display='block';return;}
+  if(!decisions.length){err.textContent='Please add at least one decision.';err.style.display='block';return;}
   err.style.display='none';
 
   await addDoc(collection(db,'minutes'),{
-    date,time,nextDate,attendees,agenda,decisions,actions,notes,
+    date,time,nextDate,attendees,
+    agenda,decisions,actions,notes,
     writtenBy:curUser.name||curUser.username,
     writtenById:curUser.id,
     createdAt:serverTimestamp()
   });
 
-  // Clear form
-  ['minDate','minTime','minNextDate','minAttendees','minAgenda','minDecisions','minActions','minNotes']
-    .forEach(id=>{document.getElementById(id).value='';});
   hide('minForm');
   show('minAddBtn');
+  minItems={agenda:[],decisions:[],actions:[]};
 }
 window.saveMinutes=saveMinutes;
 
@@ -1603,11 +1687,7 @@ function renderMinutes(){
   const emptyEl=document.getElementById('minEmpty');
   if(!listEl)return;
 
-  if(!minutes.length){
-    listEl.innerHTML='';
-    if(emptyEl)emptyEl.style.display='block';
-    return;
-  }
+  if(!minutes.length){listEl.innerHTML='';if(emptyEl)emptyEl.style.display='block';return;}
   if(emptyEl)emptyEl.style.display='none';
 
   listEl.innerHTML=minutes.map(m=>`
@@ -1632,18 +1712,18 @@ function renderMinutes(){
       </div>
       <div class="min-section">
         <div class="min-section-title">📋 Agenda</div>
-        <div class="min-section-body">${san(m.agenda)}</div>
+        ${(m.agenda||[]).map((a,i)=>`<div style="display:flex;gap:8px;padding:3px 0;font-size:13px;color:var(--ots);"><span style="color:var(--bsa);font-weight:600;">${i+1}.</span><span>${san(a)}</span></div>`).join('')}
       </div>
       <div class="min-section">
         <div class="min-section-title">✅ Decisions made</div>
-        <div class="min-section-body">${san(m.decisions)}</div>
+        ${(m.decisions||[]).map((d,i)=>`<div style="display:flex;gap:8px;padding:3px 0;font-size:13px;color:var(--ots);"><span style="color:var(--grn);font-weight:600;">${i+1}.</span><span>${san(d)}</span></div>`).join('')}
       </div>
-      ${m.actions?`<div class="min-section">
+      ${m.actions&&m.actions.length?`<div class="min-section">
         <div class="min-section-title">⚡ Action items</div>
-        <div class="min-section-body">${san(m.actions)}</div>
+        ${m.actions.map((a,i)=>`<div style="display:flex;gap:8px;padding:3px 0;font-size:13px;color:var(--ots);"><span style="color:var(--amber);font-weight:600;">${i+1}.</span><span>${san(a)}</span></div>`).join('')}
       </div>`:''}
       ${m.notes?`<div class="min-section">
-        <div class="min-section-title">🗒️ Additional notes</div>
+        <div class="min-section-title">🗒️ Notes</div>
         <div class="min-section-body">${san(m.notes)}</div>
       </div>`:''}
       ${m.nextDate?`<div class="min-next">📅 Next meeting: ${fd(m.nextDate)}</div>`:''}
@@ -1653,9 +1733,7 @@ window.renderMinutes=renderMinutes;
 
 async function askDelMin(id){
   if(!isSU())return;
-  askDel('Delete these meeting minutes?',async()=>{
-    await deleteDoc(doc(db,'minutes',id));
-  });
+  askDel('Delete these meeting minutes?',async()=>{await deleteDoc(doc(db,'minutes',id));});
 }
 window.askDelMin=askDelMin;
 

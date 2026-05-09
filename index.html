@@ -263,6 +263,15 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
   .field input,.field select{height:48px;font-size:16px;}/* prevents iOS zoom */
   .field textarea{font-size:16px;}
 }
+.min-card{background:var(--sur);border:0.5px solid var(--out-v);border-radius:var(--r-m);margin-bottom:12px;overflow:hidden;}
+.min-header{background:linear-gradient(135deg,var(--bsa),#9B3050);padding:14px 16px;}
+.min-header-title{font-size:15px;font-weight:600;color:#fff;}
+.min-header-meta{font-size:11px;color:rgba(255,255,255,0.75);margin-top:3px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.min-section{padding:12px 16px;border-bottom:0.5px solid var(--out);}
+.min-section:last-child{border-bottom:none;}
+.min-section-title{font-size:11px;font-weight:700;color:var(--bsa);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+.min-section-body{font-size:13px;color:var(--ots);line-height:1.7;white-space:pre-wrap;}
+.min-next{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--bsa-c);font-size:12px;color:var(--bsa);font-weight:500;}
 .lockout-warn{background:#FFF3E0;border:1px solid #FFCC80;border-radius:var(--r-s);padding:10px 14px;margin-bottom:12px;font-size:12px;color:#E65100;display:none;align-items:center;gap:8px;}
 .lockout-warn.show{display:flex;}
 /* EVENT MANAGEMENT */
@@ -344,6 +353,7 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
     <button class="ntab" onclick="showTab('part',this)">Participation</button>
     <button class="ntab" id="navTres" onclick="showTab('tres',this)" style="display:none;">Treasury</button>
     <button class="ntab" id="navRep" onclick="showTab('rep',this)" style="display:none;">Reports</button>
+    <button class="ntab" id="navMinutes" onclick="showTab('minutes',this)" style="display:none;">📝 Minutes</button>
     <button class="ntab" id="navEvents" onclick="showTab('events',this)" style="display:none;">📊 Programs</button>
     <button class="ntab" id="navUsers" onclick="showTab('users',this)" style="display:none;">👥 Users</button>
   </div>
@@ -492,6 +502,42 @@ body.dark{--sur:#1a1a1a;--sur-c:#242424;--ots:#f0f0f0;--ots-v:#aaa;--ots-t:#666;
           <div class="chd"><div class="ct">All users</div><span style="font-size:12px;color:var(--ots-v);" id="userCountEl"></span></div>
           <div id="userList" style="padding-bottom:8px;"></div>
         </div>
+      </div>
+    </div>
+
+    <!-- MEETING MINUTES -->
+    <div class="sec" id="minutes">
+      <div id="minLocked" class="locked" style="display:none;">
+        <div class="locked-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></div>
+        <div class="locked-h">Access restricted</div>
+        <div class="locked-b">Meeting minutes are for Committee Members and above.</div>
+        <button class="btn btn-f" onclick="toggleLogin()">Sign in</button>
+      </div>
+      <div id="minContent" style="display:none;">
+        <!-- Add minutes form -->
+        <div id="minForm" style="display:none;" class="card-f">
+          <div class="chd"><div class="ct">Add meeting minutes</div></div>
+          <div class="cb">
+            <div class="frow">
+              <div class="field"><label>Meeting date</label><input type="date" id="minDate"/></div>
+              <div class="field"><label>Meeting time</label><input type="time" id="minTime"/></div>
+            </div>
+            <div class="field"><label>Next meeting date (optional)</label><input type="date" id="minNextDate"/></div>
+            <div class="field"><label>Attendees</label><textarea id="minAttendees" maxlength="500" placeholder="e.g. Thenuka, Kavindu, Sithum, Teacher in Charge..."></textarea></div>
+            <div class="field"><label>Agenda items discussed</label><textarea id="minAgenda" maxlength="1000" placeholder="1. Opening prayer&#10;2. Review of last meeting&#10;3. ..."></textarea></div>
+            <div class="field"><label>Decisions made</label><textarea id="minDecisions" maxlength="1000" placeholder="1. Agreed to hold Blood Donation on May 15&#10;2. ..."></textarea></div>
+            <div class="field"><label>Action items</label><textarea id="minActions" maxlength="1000" placeholder="1. Thenuka — prepare registration forms by May 10&#10;2. Kavindu — book the hall by May 8&#10;3. ..."></textarea></div>
+            <div class="field"><label>Additional notes (optional)</label><textarea id="minNotes" maxlength="500" placeholder="Any other notes..."></textarea></div>
+            <div id="minErr" class="err" style="display:none;"></div>
+            <div class="btn-row">
+              <button class="btn btn-o" onclick="hide('minForm');show('minAddBtn')">Cancel</button>
+              <button class="btn btn-f" onclick="saveMinutes()">Save minutes</button>
+            </div>
+          </div>
+        </div>
+        <div id="minAddBtn"><button class="btn btn-t" style="width:100%;margin-bottom:12px;" onclick="show('minForm');hide('minAddBtn');document.getElementById('minDate').valueAsDate=new Date();">+ Add meeting minutes</button></div>
+        <div id="minList"></div>
+        <div class="empty" id="minEmpty" style="display:none;">No minutes recorded yet.</div>
       </div>
     </div>
 
@@ -649,7 +695,7 @@ const today=new Date().toISOString().slice(0,10);
 
 // Data caches
 let notices=[],events=[],duties={},parts=[],pins=[],feedbacks=[],cols=[],exps=[],deps=[],hlogs=[],hcur={amount:0,note:'No reason recorded'};
-let eventTemplates=[],scheduledEvents=[];
+let eventTemplates=[],scheduledEvents=[],minutes=[];
 let curInviteCode='';
 
 function saveSeen(){localStorage.setItem('bK_sn',JSON.stringify([...seenN]));localStorage.setItem('bK_sc',JSON.stringify([...seenC]));}
@@ -694,6 +740,7 @@ function startListeners(){
   unsubs.push(onSnapshot(query(collection(db,'cashlog'),orderBy('date','desc')),(s)=>{hlogs=s.docs.map(d=>({id:d.id,...d.data()}));if(isCom())renderT();}));
   unsubs.push(onSnapshot(doc(db,'config','cashInHand'),(s)=>{hcur=s.exists()?s.data():{amount:0,note:'No reason recorded'};if(isCom()){document.getElementById('handAmt').textContent='Rs '+(hcur.amount||0).toLocaleString();document.getElementById('handNote').textContent=san(hcur.note||'No reason recorded');}}));
   unsubs.push(onSnapshot(query(collection(db,'eventTemplates'),orderBy('createdAt','desc')),(s)=>{eventTemplates=s.docs.map(d=>({id:d.id,...d.data()}));populateSchedTpl();}));
+  unsubs.push(onSnapshot(query(collection(db,'minutes'),orderBy('createdAt','desc')),(s)=>{minutes=s.docs.map(d=>({id:d.id,...d.data()}));renderMinutes();}));
 }
 
 // HELPERS
@@ -719,6 +766,7 @@ function applyRole(){
     :'<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>';
   document.getElementById('navTres').style.display=isCom()?'block':'none';
   document.getElementById('navRep').style.display=isCom()?'block':'none';
+  document.getElementById('navMinutes').style.display=isCom()?'block':'none';
   document.getElementById('navEvents').style.display=isMem()?'block':'none';
   document.getElementById('navUsers').style.display=isSU()?'block':'none';
   document.getElementById('asmBtn').style.display=isCom()?'block':'none';
@@ -742,7 +790,7 @@ function showTab(id,btn){
   if(id==='notice'){renderSpot();renderNotices();updateTicker();markNSeen();}
   if(id==='cal'){renderEvtInCal();markCSeen();}
   if(id==='part'){renderGathaLb();renderGathaLog();renderPinLb();renderPinLog();renderFb();}
-  if(id==='users')renderUsers();
+  if(id==='minutes')renderMinutes();
   if(id==='events')renderEvtTrack();
   if(id==='events'){renderEvtTrack();populateSchedTpl();}
   if(id==='home')renderDashboard();
@@ -1504,6 +1552,114 @@ function renderDashboard(){
   document.getElementById('notifBtn').style.display=curUser?'flex':'none';
 }
 window.renderDashboard=renderDashboard;
+
+// ═══════════════════════════════════════════════════
+//  MEETING MINUTES
+// ═══════════════════════════════════════════════════
+
+let minutes=[];
+
+async function saveMinutes(){
+  if(!isCom())return;
+  const date=document.getElementById('minDate').value;
+  const time=document.getElementById('minTime').value;
+  const nextDate=document.getElementById('minNextDate').value;
+  const attendees=san(document.getElementById('minAttendees').value);
+  const agenda=san(document.getElementById('minAgenda').value);
+  const decisions=san(document.getElementById('minDecisions').value);
+  const actions=san(document.getElementById('minActions').value);
+  const notes=san(document.getElementById('minNotes').value);
+  const err=document.getElementById('minErr');
+
+  if(!date||!attendees||!agenda||!decisions){
+    err.textContent='Please fill in date, attendees, agenda and decisions.';
+    err.style.display='block';return;
+  }
+  err.style.display='none';
+
+  await addDoc(collection(db,'minutes'),{
+    date,time,nextDate,attendees,agenda,decisions,actions,notes,
+    writtenBy:curUser.name||curUser.username,
+    writtenById:curUser.id,
+    createdAt:serverTimestamp()
+  });
+
+  // Clear form
+  ['minDate','minTime','minNextDate','minAttendees','minAgenda','minDecisions','minActions','minNotes']
+    .forEach(id=>{document.getElementById(id).value='';});
+  hide('minForm');
+  show('minAddBtn');
+}
+window.saveMinutes=saveMinutes;
+
+function renderMinutes(){
+  if(!isCom()){
+    document.getElementById('minLocked').style.display='block';
+    document.getElementById('minContent').style.display='none';
+    return;
+  }
+  document.getElementById('minLocked').style.display='none';
+  document.getElementById('minContent').style.display='block';
+
+  const listEl=document.getElementById('minList');
+  const emptyEl=document.getElementById('minEmpty');
+  if(!listEl)return;
+
+  if(!minutes.length){
+    listEl.innerHTML='';
+    if(emptyEl)emptyEl.style.display='block';
+    return;
+  }
+  if(emptyEl)emptyEl.style.display='none';
+
+  listEl.innerHTML=minutes.map(m=>`
+    <div class="min-card">
+      <div class="min-header">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;">
+          <div>
+            <div class="min-header-title">📝 Meeting — ${fd(m.date)}${m.time?' at '+m.time:''}</div>
+            <div class="min-header-meta">
+              <span>✍️ ${san(m.writtenBy)}</span>
+              ${m.nextDate?`<span>📅 Next: ${fd(m.nextDate)}</span>`:''}
+            </div>
+          </div>
+          ${isSU()?`<button class="del-btn" style="border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff;" onclick="askDelMin('${m.id}')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Delete
+          </button>`:''}
+        </div>
+      </div>
+      <div class="min-section">
+        <div class="min-section-title">👥 Attendees</div>
+        <div class="min-section-body">${san(m.attendees)}</div>
+      </div>
+      <div class="min-section">
+        <div class="min-section-title">📋 Agenda</div>
+        <div class="min-section-body">${san(m.agenda)}</div>
+      </div>
+      <div class="min-section">
+        <div class="min-section-title">✅ Decisions made</div>
+        <div class="min-section-body">${san(m.decisions)}</div>
+      </div>
+      ${m.actions?`<div class="min-section">
+        <div class="min-section-title">⚡ Action items</div>
+        <div class="min-section-body">${san(m.actions)}</div>
+      </div>`:''}
+      ${m.notes?`<div class="min-section">
+        <div class="min-section-title">🗒️ Additional notes</div>
+        <div class="min-section-body">${san(m.notes)}</div>
+      </div>`:''}
+      ${m.nextDate?`<div class="min-next">📅 Next meeting: ${fd(m.nextDate)}</div>`:''}
+    </div>`).join('');
+}
+window.renderMinutes=renderMinutes;
+
+async function askDelMin(id){
+  if(!isSU())return;
+  askDel('Delete these meeting minutes?',async()=>{
+    await deleteDoc(doc(db,'minutes',id));
+  });
+}
+window.askDelMin=askDelMin;
 
 // ═══════════════════════════════════════════════════
 //  INIT

@@ -527,11 +527,24 @@ body.dark{
 .lockout-warn.show{display:flex;}
 
 /* LOADING */
-.loading-overlay{position:fixed;inset:0;background:rgba(107,26,42,0.97);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:16px;}
-.loading-logo{width:84px;height:84px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:40px;}
-.loading-text{color:#fff;font-size:17px;font-weight:600;letter-spacing:0.1px;}
-.loading-sub{color:rgba(255,255,255,0.65);font-size:14px;}
-.spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,0.25);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;}
+.loading-overlay{
+  position:fixed;inset:0;
+  background:#1E0509;
+  display:flex;align-items:center;justify-content:center;
+  z-index:999;
+  transition:opacity 0.5s ease;
+}
+.loading-overlay.fade-out{opacity:0;pointer-events:none;}
+.lo-emoji{
+  font-size:90px;line-height:1;
+  animation:pray-zoom 1.4s cubic-bezier(0.22,1,0.36,1) forwards;
+  filter:drop-shadow(0 0 30px rgba(201,168,76,0.6));
+}
+@keyframes pray-zoom{
+  from{opacity:0;transform:scale(0.2);}
+  to{opacity:1;transform:scale(1);}
+}
+.spinner{display:none;}
 @keyframes spin{to{transform:rotate(360deg);}}
 @keyframes pulse-dot{0%,100%{transform:scale(1);}50%{transform:scale(1.4);}}
 
@@ -556,20 +569,90 @@ body.dark{
 .dlg-t{font-size:19px;font-weight:600;color:var(--ots);margin-bottom:6px;}
 .dlg-b{font-size:13px;color:var(--ots-v);margin-bottom:16px;line-height:1.6;}
 .dlg-act{display:flex;justify-content:flex-end;gap:8px;margin-top:14px;}
+
+/* PARTICIPATION TABS */
+.ptabs{display:flex;gap:10px;margin-bottom:18px;}
+.ptab{flex:1;padding:13px 8px;border-radius:var(--r-l);border:1.5px solid var(--out);background:var(--sur);color:var(--ots-v);font-size:13px;font-weight:600;cursor:pointer;text-align:center;transition:background 0.18s,color 0.18s,border-color 0.18s,box-shadow 0.18s;box-shadow:var(--shadow-1);}
+.ptab:hover{border-color:var(--out-v);color:var(--ots);}
+.ptab.ag{background:var(--bsa);color:#fff;border-color:var(--bsa);box-shadow:0 2px 8px rgba(107,26,42,0.25);}
+.ptab.ap{background:linear-gradient(135deg,#7A5A00,#C9A84C);color:#fff;border-color:#7A5A00;box-shadow:0 2px 8px rgba(122,90,0,0.25);}
+.ptab.af{background:var(--blu);color:#fff;border-color:var(--blu);box-shadow:0 2px 8px rgba(0,74,159,0.2);}
+
+/* ── CLASS ALIASES: JS generates these names, v13 CSS uses different names ── */
+
+/* metric-row (JS) = metrics (CSS) */
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+
+/* nb-filters + filter-pill (JS) = fpill (CSS) */
+.nb-filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;}
+.nb-filters::-webkit-scrollbar{display:none;}
+.filter-pill{flex-shrink:0;padding:8px 16px;border-radius:var(--r-f);border:1.5px solid var(--out);background:var(--sur);font-size:13px;font-weight:600;cursor:pointer;color:var(--ots-v);transition:background 0.15s,color 0.15s,border-color 0.15s;}
+.filter-pill:hover{border-color:var(--out-v);color:var(--ots);}
+.filter-pill.fp-all.active{background:var(--ots);color:var(--sur);border-color:var(--ots);}
+.filter-pill.fp-urgent.active{background:#991B1B;color:#fff;border-color:#991B1B;}
+.filter-pill.fp-important.active{background:#92400E;color:#fff;border-color:#92400E;}
+.filter-pill.fp-general.active{background:#1E40AF;color:#fff;border-color:#1E40AF;}
+
+/* nc-band (JS) = notice-band (CSS) */
+.nc-band{height:40px;display:flex;align-items:center;gap:8px;padding:0 16px;}
+.nc-band.urgent{background:#991B1B;}
+.nc-band.important{background:#92400E;}
+.nc-band.general{background:#1E40AF;}
+.nc-band-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.7);flex-shrink:0;}
+.nc-band.urgent .nc-band-dot{animation:pulse 1.4s ease-in-out infinite;background:#fff;}
+.nc-band-label{font-size:11px;font-weight:700;color:rgba(255,255,255,0.75);letter-spacing:0.5px;text-transform:uppercase;}
+.nc-band-title{font-size:14px;font-weight:500;color:#fff;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.nc-band-del button{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:var(--r-s);border:1px solid rgba(255,255,255,0.4);background:rgba(255,255,255,0.15);color:#fff;font-size:11px;cursor:pointer;}
+.nc-new-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--r-f);background:#FF4444;color:#fff;font-size:10px;font-weight:700;margin-left:auto;flex-shrink:0;}
+.nc-body-wrap{padding:14px 18px 0;}
+.nc-body{font-size:14px;color:var(--ots);line-height:1.7;}
+.nc-image{width:100%;max-height:180px;object-fit:cover;display:block;margin-top:12px;border-radius:var(--r-m);}
+.nc-meta-row{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.nc-date{font-size:12px;color:var(--ots-v);}
+.nc-expiry.far{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:var(--r-f);background:#DCFCE7;color:#166534;border:1px solid #BBF7D0;}
+.nc-expiry.soon{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:var(--r-f);background:#FEF3C7;color:#92400E;border:1px solid #FDE68A;animation:pulse 2s ease-in-out infinite;}
+.nc-expiry.urgent-exp{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;padding:3px 10px;border-radius:var(--r-f);background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;animation:pulse 1.2s ease-in-out infinite;}
+.nc-expiry.expired-lbl{display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:3px 10px;border-radius:var(--r-f);background:#F3F4F6;color:#6B7280;text-decoration:line-through;}
+.nc-footer{padding:12px 18px 14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--sur-c);margin-top:12px;}
+.ack-count{font-size:12px;color:var(--ots-v);margin-left:auto;}
+
+/* Assembly: JS uses asm-head/asm-body/asm-hl, CSS has asm-card-head/asm-card-body/asm-card-title */
+.asm-head{background:var(--bsa-c);padding:10px 14px;}
+.asm-hl{font-size:13px;font-weight:600;color:var(--bsa);}
+.asm-body{padding:10px 14px 12px;}
+.asm-duty{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--sur-c);}
+.asm-duty:last-child{border-bottom:none;}
+.asm-tk{font-size:13px;color:var(--ots-v);}
+.asm-ps{font-size:13px;font-weight:500;color:var(--ots);}
+
+/* archive-toggle */
+.archive-toggle{font-size:13px;color:var(--bsa);cursor:pointer;font-weight:500;padding:8px 0;display:flex;align-items:center;gap:6px;}
+
+/* react-btn aliases */
+.react-btn.reacted-hf{background:#FFF7ED;border-color:#FB923C;color:#C2410C;}
+.react-btn.reacted-ht{background:#FDF2F8;border-color:#F472B6;color:#BE185D;}
+
+/* spotlight aliases (JS uses spotlight-*, CSS has spot-*) */
+.spotlight-icon{font-size:30px;flex-shrink:0;}
+.spotlight-body{flex:1;}
+.spotlight-label{font-size:10px;font-weight:700;color:rgba(255,255,255,0.8);text-transform:uppercase;letter-spacing:0.8px;}
+.spotlight-name{font-size:19px;font-weight:700;color:#fff;margin-top:2px;}
+.spotlight-sub{font-size:12px;color:rgba(255,255,255,0.85);margin-top:2px;}
+.spotlight-score{font-size:24px;font-weight:700;color:#fff;text-align:right;}
+.spotlight-score-lbl{font-size:10px;color:rgba(255,255,255,0.7);}
+/* Also make spotlight card clickable-feeling with a link to participation */
+.spotlight{cursor:pointer;}
 </style>
 </head>
 <body>
 
 <div class="loading-overlay" id="loadingOverlay">
-  <div class="loading-logo">🙏</div>
-  <div class="loading-text">BSA Portal</div>
-  <div class="spinner"></div>
-  <div class="loading-sub">Connecting to database...</div>
+  <div class="lo-emoji">🙏</div>
 </div>
 
 <div class="app" id="app" style="display:none;">
   <div class="topbar">
-    <div class="tb-logo"><img src="" alt="BSA" onerror="this.parentNode.innerHTML='<span style=\'font-size:11px;font-weight:700;color:#6B1A2A;padding:2px;\'>BSA</span>'"/></div>
+    <div class="tb-logo" style="display:flex;align-items:center;justify-content:center;"><span style="font-size:13px;font-weight:800;color:#6B1A2A;letter-spacing:0.5px;line-height:1;">BSA</span></div>
     <div class="tb-text"><h1>Buddhist Students' Association</h1><p>S. Thomas' College, Mount Lavinia</p></div>
     <div class="tb-right">
       <span class="role-chip" id="roleChip"></span>
@@ -636,7 +719,7 @@ body.dark{
 
     <!-- NOTICE BOARD -->
     <div class="sec" id="notice">
-      <div id="spotlightCard"></div>
+      <div id="spotlightCard" onclick="showTab('part',document.querySelectorAll('.ntab')[4])" title="View participation leaderboard"></div>
       <div id="noticeForm" style="display:none;" class="card-f">
         <div class="chd"><div class="ct">Post a notice</div></div>
         <div class="cb">
@@ -679,7 +762,7 @@ body.dark{
     <div class="sec" id="part">
       <div class="ptabs"><button class="ptab ag" id="ptabG" onclick="switchPTab('gatha')">🙏 Gatha</button><button class="ptab" id="ptabP" onclick="switchPTab('pin')">📿 Pin Katte</button><button class="ptab" id="ptabF" onclick="switchPTab('feedback')">⭐ Feedback</button></div>
       <div id="secGatha">
-        <div class="lb-header"><div><div class="lb-header-title">🏆 Score Leaderboard</div><div class="lb-header-sub">Points based on activity weight</div></div><select id="lbP" onchange="renderGathaLb()" style="font-size:11px;padding:4px 8px;border-radius:var(--r-f);border:0.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:#fff;"><option value="all">All time</option><option value="month">This month</option><option value="term">This term</option></select></div>
+        <div class="lb-head"><div><div class="lb-head-title">🏆 Score Leaderboard</div><div class="lb-head-sub">Points based on activity weight</div></div><select id="lbP" onchange="renderGathaLb()" style="font-size:11px;padding:4px 8px;border-radius:var(--r-f);border:0.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:#fff;"><option value="all">All time</option><option value="month">This month</option><option value="term">This term</option></select></div>
         <div class="lb-score-legend"><span class="score-pill">Life Talk <span class="pts">10pts</span></span><span class="score-pill">Jataka Katha <span class="pts">5pts</span></span><span class="score-pill">Pansil <span class="pts">5pts</span></span><span class="score-pill">K. Metta <span class="pts">5pts</span></span><span class="score-pill">Bavana <span class="pts">5pts</span></span><span class="score-pill">Video <span class="pts">3pts</span></span></div>
         <!-- Gatha Search -->
         <div class="search-bar" style="margin-bottom:12px;">
@@ -2078,8 +2161,12 @@ async function init(){
       catch(e){clrSess();}
     }
     startListeners();applyRole();applyDark();
-    document.getElementById('loadingOverlay').style.display='none';
     document.getElementById('app').style.display='flex';
+    const lo=document.getElementById('loadingOverlay');
+    setTimeout(()=>{
+      lo.classList.add('fade-out');
+      setTimeout(()=>{lo.style.display='none';},500);
+    },1000);
     renderDashboard();
     document.addEventListener('visibilitychange',()=>{if(!document.hidden&&curUser){const exp=parseInt(sessionStorage.getItem('bK_exp')||'0');if(Date.now()>=exp){curUser=null;clrSess();applyRole();}}});
   }catch(e){
@@ -2088,6 +2175,44 @@ async function init(){
   }
 }
 init();
+</script>
+
+
+
+<script>
+(function(){
+  const canvas=document.getElementById('particleCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  let W,H,pts=[];
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<40;i++){
+    pts.push({
+      x:Math.random()*1,y:Math.random(),
+      vx:(Math.random()-.5)*.0003,vy:-(Math.random()*.0005+.0001),
+      s:Math.random()*1.8+.4,o:Math.random()*.5+.1,
+      g:Math.random()>.4,life:Math.random()
+    });
+  }
+  let raf;
+  function draw(){
+    if(!document.getElementById('loadingOverlay')||document.getElementById('loadingOverlay').style.display==='none'){cancelAnimationFrame(raf);return;}
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.life+=.003;
+      if(p.y<-.02){p.y=1.02;p.x=Math.random();}
+      const fade=p.life%1;
+      const a=p.o*(fade<.1?fade/.1:fade>.8?(1-fade)/.2:1);
+      ctx.beginPath();
+      ctx.arc(p.x*W,p.y*H,p.s,0,Math.PI*2);
+      ctx.fillStyle=p.g?`rgba(201,168,76,${a})`:`rgba(255,210,160,${a*.5})`;
+      ctx.fill();
+    });
+    raf=requestAnimationFrame(draw);
+  }
+  draw();
+})();
 </script>
 </body>
 </html>

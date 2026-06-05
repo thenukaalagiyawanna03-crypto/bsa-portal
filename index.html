@@ -644,6 +644,19 @@ body.dark{
 .spotlight{cursor:pointer;}
 
 .scrim{position:fixed;inset:0;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;}
+
+/* SKELETON SCREENS */
+@keyframes shimmer{0%{background-position:-200% 0;}100%{background-position:200% 0;}}
+.skel{background:linear-gradient(90deg,var(--sur-c) 25%,var(--out) 50%,var(--sur-c) 75%);background-size:200% 100%;animation:shimmer 1.4s ease-in-out infinite;border-radius:6px;}
+.skel-line{height:13px;margin-bottom:8px;}
+.skel-line.short{width:40%;}
+.skel-line.med{width:65%;}
+.skel-line.full{width:100%;}
+.skel-line.long{width:85%;}
+.skel-card{background:var(--sur);border:0.5px solid var(--out-v);border-radius:var(--r-m);padding:16px;margin-bottom:12px;}
+.skel-avatar{width:42px;height:42px;border-radius:50%;flex-shrink:0;}
+.skel-podium{height:80px;border-radius:var(--r-m);margin-bottom:10px;}
+.skel-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:0.5px solid var(--out);}
 </style>
 </head>
 <body>
@@ -1182,14 +1195,14 @@ function showTab(id,btn){
   if(btn)btn.classList.add('active');
   if(id==='tres')renderT();
   if(id==='rep')renderRep();
-  if(id==='notice'){renderSpot();renderNotices();updateTicker();markNSeen();}
+  if(id==='notice'){showSkelNotices();renderSpot();renderNotices();updateTicker();markNSeen();}
   if(id==='cal'){renderEvtInCal();markCSeen();}
-  if(id==='part'){renderGathaLb();renderGathaLog();renderPinLb();renderPinLog();renderFb();}
+  if(id==='part'){showSkelGatha();showSkelPin();renderGathaLb();renderGathaLog();renderPinLb();renderPinLog();renderFb();}
   if(id==='minutes')renderMinutes();
   if(id==='events')renderEvtTrack();
   if(id==='events'){renderEvtTrack();populateSchedTpl();}
   if(id==='users')renderUsers();
-  if(id==='home')renderDashboard();
+  if(id==='home'){showSkelHome();renderDashboard();}
 }
 window.showTab=showTab;
 
@@ -1483,6 +1496,19 @@ window.rejectUser=rejectUser;
 async function changeRole(id,role){if(!isSU())return;await updateDoc(doc(db,'users',id),{role});renderUsers();}
 window.changeRole=changeRole;
 async function removeUser(id,name){if(!isSU())return;askDel(`Remove ${name} from the portal?`,async()=>{await deleteDoc(doc(db,'users',id));renderUsers();});}
+
+// SKELETON HELPERS
+function skelLines(n){return Array.from({length:n},(_,i)=>`<div class="skel skel-line ${i===0?'med':i===n-1?'short':'full'}"></div>`).join('');}
+function skelCard(rows=2){return`<div class="skel-card"><div class="skel-row" style="border:none;padding:0;"><div class="skel skel-avatar"></div><div style="flex:1;">${skelLines(rows)}</div></div></div>`;}
+function skelCards(n,rows){return Array.from({length:n},()=>skelCard(rows)).join('');}
+function skelPodium(){return`<div class="skel skel-podium" style="background:linear-gradient(90deg,#8B6914,#C9A84C,#8B6914);opacity:0.3;"></div><div class="skel skel-podium" style="height:70px;opacity:0.2;"></div><div class="skel skel-podium" style="height:60px;opacity:0.15;"></div>`;}
+
+// Show skeletons immediately when tabs open
+function showSkelNotices(){document.getElementById('noticeList').innerHTML=skelCards(3,2);}
+function showSkelGatha(){document.getElementById('gPodium').innerHTML=skelPodium();document.getElementById('gRest').innerHTML=skelCards(3,1);document.getElementById('gathaLog').innerHTML=skelCards(4,1);}
+function showSkelPin(){document.getElementById('pinPodium').innerHTML=skelPodium();document.getElementById('pinRest').innerHTML=skelCards(2,1);document.getElementById('pinLog').innerHTML=skelCards(3,1);}
+function showSkelAsm(){document.getElementById('asmGrid').innerHTML=`<div class="skel-card">${skelLines(3)}</div><div class="skel-card">${skelLines(2)}</div><div class="skel-card">${skelLines(1)}</div><div class="skel-card">${skelLines(1)}</div>`;}
+function showSkelHome(){document.getElementById('dashNotices').innerHTML=skelCards(2,2);document.getElementById('dashTop').innerHTML=skelCards(2,1);document.getElementById('dashWeek').innerHTML=skelCards(2,1);}
 window.removeUser=removeUser;
 window.askDelN=askDelN;
 window.askDelEv=askDelEv;

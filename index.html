@@ -786,11 +786,31 @@ body.dark{
           <button onclick="document.getElementById('gathaSearch').value='';searchGatha('');" style="border:none;background:none;color:var(--ots-v);cursor:pointer;font-size:16px;line-height:1;padding:0;">✕</button>
         </div>
         <div id="gathaSearchResults" style="display:none;" class="card" ><div class="chd"><div class="ct">Search results</div></div><div id="gathaSearchList" style="padding-bottom:8px;"></div></div>
-        <div id="partForm" style="display:none;" class="card-f"><div class="chd"><div class="ct">Record gatha participation</div></div><div class="cb"><div class="frow"><div class="field"><label>Student name</label><input type="text" id="pName" maxlength="60" placeholder="Full name"/></div><div class="field"><label>Date</label><input type="date" id="pDate"/></div></div><div class="frow"><div class="field"><label>Gatha</label><select id="pGatha"><option>Pansil</option><option>Karaniya Metta</option><option>Bavana</option><option>Jataka Katha</option><option>Life Talk</option><option>Video</option><option>Other</option></select></div><div class="field"><label>Notes</label><input type="text" id="pNote" maxlength="120" placeholder="optional"/></div></div><div id="pErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('partForm')">Cancel</button><button class="btn btn-f" onclick="addPart()">Record</button></div></div></div>
-        <div class="filter-bar"><select id="lbG" onchange="renderGathaLb()"><option value="all">All gathas</option><option value="Pansil">Pansil</option><option value="Karaniya Metta">Karaniya Metta</option><option value="Bavana">Bavana</option><option value="Jataka Katha">Jataka Katha</option><option value="Life Talk">Life Talk</option></select></div>
-        <div class="podium" id="gPodium"></div><div id="gRest"></div>
-        <div class="card"><div class="chd"><div class="ct">Recent gatha log</div></div><div id="gathaLog" style="padding-bottom:8px;"></div></div>
-        <div id="partBtn" style="display:none;margin-top:8px;"><button class="btn btn-t" style="width:100%;" onclick="show('partForm');document.getElementById('pDate').valueAsDate=new Date();">+ Record gatha</button></div>
+        <div id="partForm" style="display:none;" class="card-f">
+          <div style="background:linear-gradient(135deg,var(--bsa),#9B3050);padding:11px 16px;display:flex;align-items:center;gap:8px;">
+            <span style="font-size:18px;">🙏</span>
+            <span style="font-size:13px;font-weight:600;color:#fff;">Record gatha participation</span>
+          </div>
+          <div class="cb" style="padding-top:12px;">
+            <div class="frow">
+              <div class="field"><label>Student name</label><input type="text" id="pName" maxlength="60" placeholder="Full name"/></div>
+              <div class="field"><label>Date</label><input type="date" id="pDate"/></div>
+            </div>
+            <div class="frow">
+              <div class="field"><label>Gatha</label><select id="pGatha"><option>Pansil</option><option>Karaniya Metta</option><option>Bavana</option><option>Jataka Katha</option><option>Life Talk</option><option>Video</option><option>Other</option></select></div>
+              <div class="field"><label>Notes (optional)</label><input type="text" id="pNote" maxlength="120" placeholder="optional"/></div>
+            </div>
+            <div id="pErr" class="err" style="display:none;"></div>
+            <div class="btn-row">
+              <button class="btn btn-o" onclick="closePartForm()">Cancel</button>
+              <button class="btn btn-f" onclick="addPart()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                Record
+              </button>
+            </div>
+          </div>
+        </div>
+        <div id="partBtn" style="display:none;margin-top:8px;"><button class="btn btn-t" style="width:100%;" onclick="openPartForm()">🙏 + Record gatha</button></div>
       </div>
       <div id="secPin" style="display:none;"><div class="sec-label"><span class="sec-label-badge sl-p">📿 Pin Katte leaderboard</span></div><div class="pin-note">Separate medals — independent from gatha rankings.</div>
         <!-- SU: Record Pin Katte form -->
@@ -1289,7 +1309,17 @@ window.askDelDu=askDelDu;
 function calcSc(e){return e.reduce((s,x)=>s+(POINTS[x.gatha]||2),0);}
 function renderGathaLb(){const fg=document.getElementById('lbG').value,per=document.getElementById('lbP').value;let fl=fpf(parts,per);if(fg!=='all')fl=fl.filter(p=>p.gatha===fg);const bn={};fl.forEach(p=>{if(!bn[p.name])bn[p.name]=[];bn[p.name].push(p);});const sc=Object.entries(bn).map(([name,e])=>{const score=calcSc(e);const bd={};e.forEach(x=>{bd[x.gatha]=(bd[x.gatha]||0)+1;});return{name,e,score,bd};}).sort((a,b)=>b.score-a.score);const mx=sc.length?sc[0].score:1;const t3=sc.slice(0,3),rest=sc.slice(3);const cr=['🥇','🥈','🥉'],pc=['podium-1','podium-2','podium-3'];document.getElementById('gPodium').innerHTML=t3.length?t3.map((s,i)=>{const bdg=Object.entries(s.bd).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([g,c])=>`<span class="activity-badge">${san(g)}×${c}(${(POINTS[g]||2)*c}pts)</span>`).join('');return`<div class="${pc[i]}"><div class="podium-crown">${cr[i]}</div><div class="podium-av">${ini(s.name)}</div><div class="podium-body"><div class="podium-name">${san(s.name)}</div><div class="podium-activities">${s.e.length} activit${s.e.length!==1?'ies':'y'}</div><div class="podium-badges">${bdg}</div></div><div class="podium-score-block"><div class="podium-score">${s.score}</div><div class="podium-score-lbl">points</div></div></div>`;}).join(''):'<div class="empty" style="background:var(--sur);border-radius:var(--r-m);padding:24px;">No participation recorded yet.</div>';const rEl=document.getElementById('gRest');if(rest.length){rEl.innerHTML=`<div class="lb-list">${rest.map((s,i)=>{const ta=Object.entries(s.bd).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([g,c])=>`${san(g)}×${c}`).join(', ');return`<div class="lb-item"><div class="lb-rank">${i+4}</div><div class="lb-av g">${ini(s.name)}</div><div class="lb-item-body"><div class="lb-item-name">${san(s.name)}</div><div class="lb-item-acts">${ta}</div></div><div class="lb-score-bar-wrap"><div class="lb-score-bar"><div class="lb-score-fill" style="width:${Math.round(s.score/mx*100)}%"></div></div></div><div class="lb-pts">${s.score}</div></div>`;}).join('')}</div>`;}else rEl.innerHTML='';}
 function renderGathaLog(){const rc=parts.slice(0,10);document.getElementById('gathaLog').innerHTML=rc.length?rc.map(p=>`<div class="li"><div class="li-body"><div class="li-t">${san(p.name)}</div><div class="li-s">${fd(p.date)}${p.note?' · '+san(p.note):''}</div></div><div class="li-r"><span class="chip ${GC[p.gatha]||'c-p'}">${san(p.gatha)}</span><span style="font-size:11px;font-weight:600;color:var(--bsa);background:var(--bsa-c);padding:3px 8px;border-radius:var(--r-f);">+${POINTS[p.gatha]||2}pts</span>${isSU()?dB(`askDelPart('${p.id}','${san(p.name).replace(/'/g,"\\'")}')`):''}  </div></div>`).join(''):'<div class="empty">No entries yet.</div>';}
-async function addPart(){if(!isSU())return;const name=san(document.getElementById('pName').value),date=document.getElementById('pDate').value,gatha=document.getElementById('pGatha').value,note=san(document.getElementById('pNote').value),err=document.getElementById('pErr');if(!name||!date){err.textContent='Name and date required.';err.style.display='block';return;}if(!VG.includes(gatha)){err.textContent='Invalid gatha.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'participation'),{name,date,gatha,note,createdAt:serverTimestamp()});document.getElementById('pName').value='';document.getElementById('pNote').value='';hide('partForm');}
+function openPartForm(){
+  document.getElementById('pDate').valueAsDate=new Date();
+  document.getElementById('pName').value='';
+  document.getElementById('pNote').value='';
+  document.getElementById('pErr').style.display='none';
+  show('partForm');hide('partBtn');
+}
+window.openPartForm=openPartForm;
+function closePartForm(){hide('partForm');if(isSU()&&activeTab==='gatha')show('partBtn');}
+window.closePartForm=closePartForm;
+async function addPart(){if(!isSU())return;const name=san(document.getElementById('pName').value),date=document.getElementById('pDate').value,gatha=document.getElementById('pGatha').value,note=san(document.getElementById('pNote').value),err=document.getElementById('pErr');if(!name||!date){err.textContent='Name and date required.';err.style.display='block';return;}if(!VG.includes(gatha)){err.textContent='Invalid gatha.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'participation'),{name,date,gatha,note,createdAt:serverTimestamp()});document.getElementById('pName').value='';document.getElementById('pNote').value='';hide('partForm');show('partBtn');}
 window.addPart=addPart;
 async function askDelPart(id,name){if(!isSU())return;askDel(`Delete participation entry for ${name}?`,async()=>{await deleteDoc(doc(db,'participation',id));});}
 window.askDelPart=askDelPart;
@@ -1941,7 +1971,7 @@ function renderDashboard(){
       actions.push({icon:'⭐',label:'Give Feedback',sub:'Rate a gatha',fn:`showTab('part',document.querySelectorAll('.ntab')[4]);setTimeout(()=>{switchPTab('feedback');setTimeout(()=>openFbForm(),100);},100)`});
     }
     if(isSU()){
-      actions.push({icon:'🙏',label:'Record Gatha',sub:'Participation entry',fn:`showTab('part',document.querySelectorAll('.ntab')[4]);setTimeout(()=>{show('partForm');document.getElementById('pDate').valueAsDate=new Date();},100)`});
+      actions.push({icon:'🙏',label:'Record Gatha',sub:'Participation entry',fn:`showTab('part',document.querySelectorAll('.ntab')[4]);setTimeout(()=>{openPartForm();},100)`});
       actions.push({icon:'👥',label:'Invite Member',sub:'Generate invite code',fn:`showTab('users',document.querySelectorAll('.ntab')[document.querySelectorAll('.ntab').length-1])`});
     }
     qaGrid.innerHTML=actions.slice(0,4).map(a=>`<button class="qa-btn" onclick="${a.fn}"><div class="qa-icon">${a.icon}</div><div class="qa-label">${a.label}</div><div class="qa-sub">${a.sub}</div></button>`).join('');

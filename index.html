@@ -1186,7 +1186,6 @@ function showTab(id,btn){
   if(id==='minutes')renderMinutes();
   if(id==='events')renderEvtTrack();
   if(id==='events'){renderEvtTrack();populateSchedTpl();}
-  if(id==='users')renderUsers();
   if(id==='home')renderDashboard();
 }
 window.showTab=showTab;
@@ -1788,7 +1787,7 @@ function renderEvtTrack(){
             ${a.cost?`<div class="evt-act-cost">💰 Rs ${a.cost.toLocaleString()}</div>`:''}
           </div>
           <div>
-            ${canEdit?`<select class="status-select ${sc[a.status]||'planned'}" onchange="updateActStatus('${evt.id}',${i},this.value,this)">
+            ${canEdit?`<select class="status-select ${sc[a.status]||'planned'}" onchange="updateActStatus('${evt.id}',${i},this.value)">
               <option value="planned" ${a.status==='planned'?'selected':''}>📋 Planned</option>
               <option value="inprogress" ${a.status==='inprogress'?'selected':''}>⚙️ In Progress</option>
               <option value="done" ${a.status==='done'?'selected':''}>✅ Done</option>
@@ -1802,11 +1801,9 @@ function renderEvtTrack(){
 }
 window.renderEvtTrack=renderEvtTrack;
 
-async function updateActStatus(evtId,actIdx,newStatus,el){
+async function updateActStatus(evtId,actIdx,newStatus){
   const evt=scheduledEvents.find(e=>e.id===evtId);if(!evt)return;
   const acts=[...evt.activities];acts[actIdx]={...acts[actIdx],status:newStatus};
-  if(el){el.classList.remove('status-flash');void el.offsetWidth;el.classList.add('status-flash');}
-  if(newStatus==='done')burstConfetti(window.innerWidth/2,window.innerHeight/3);
   await updateDoc(doc(db,'scheduledEvents',evtId),{activities:acts});
 }
 window.updateActStatus=updateActStatus;

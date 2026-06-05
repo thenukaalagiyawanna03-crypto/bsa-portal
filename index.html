@@ -642,6 +642,14 @@ body.dark{
 .spotlight-score-lbl{font-size:10px;color:rgba(255,255,255,0.7);}
 /* Also make spotlight card clickable-feeling with a link to participation */
 .spotlight{cursor:pointer;}
+
+/* CHART SECTIONS */
+.chart-section{background:var(--sur);border:0.5px solid var(--out-v);border-radius:var(--r-m);padding:16px;margin-bottom:14px;}
+.chart-title{font-size:14px;font-weight:600;color:var(--ots);margin-bottom:3px;}
+.chart-sub{font-size:11px;color:var(--ots-v);margin-bottom:12px;}
+.chart-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ots-v);}
+.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
 </style>
 </head>
 <body>
@@ -827,7 +835,6 @@ body.dark{
         <div id="tsH" style="display:none;"><div id="frmH" style="display:none;" class="card-f"><div class="chd"><div class="ct">Log cash entry</div></div><div class="cb"><div class="frow"><div class="field"><label>Date</label><input type="date" id="hDate"/></div><div class="field"><label>Amount (Rs)</label><input type="number" id="hAmt" min="1" max="99999"/></div></div><div class="frow"><div class="field"><label>Type</label><select id="hType"><option value="in">Received</option><option value="out">Returned / spent</option></select></div><div class="field"><label>Reason</label><input type="text" id="hNote" maxlength="120"/></div></div><div id="hErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('frmH')">Cancel</button><button class="btn btn-f" style="background:var(--blu);" onclick="addHlog()">Log</button></div></div></div><div id="addHlogBtn" style="display:none;"><button class="btn btn-t" style="width:100%;margin-bottom:10px;" onclick="show('frmH');document.getElementById('hDate').valueAsDate=new Date();">+ Log cash entry</button></div><div class="card"><div class="chd"><div class="ct">Cash log</div></div><div id="hlogList" style="padding-bottom:8px;"></div></div></div>
         <div id="tsPat" style="display:none;">
           <div class="chart-section"><div class="chart-title">Income vs Expenses</div><div class="chart-sub">Monthly comparison</div><div class="chart-legend"><span class="legend-item"><span class="legend-dot" style="background:#6B1A2A;"></span>Income</span><span class="legend-item"><span class="legend-dot" style="background:#B3261E;"></span>Expenses</span></div><div style="position:relative;width:100%;height:200px;"><canvas id="chartIncExp"></canvas></div></div>
-          <div class="chart-section"><div class="chart-title">Net balance trend</div><div class="chart-sub">Running net balance</div><div class="chart-legend"><span class="legend-item"><span class="legend-dot" style="background:#006E30;border-radius:50%;"></span>Net balance</span></div><div style="position:relative;width:100%;height:180px;"><canvas id="chartNet"></canvas></div></div>
           <div class="chart-section"><div class="chart-title">Pin Katte collection trend</div><div class="chart-sub">Weekly amounts</div><div class="chart-legend"><span class="legend-item"><span class="legend-dot" style="background:#C9A84C;border-radius:50%;"></span>Collection (Rs)</span></div><div style="position:relative;width:100%;height:180px;"><canvas id="chartPin"></canvas></div></div>
         </div>
       </div>
@@ -1422,7 +1429,6 @@ function drawCharts(){
   const ms=Object.keys(mm).sort(),lb=ms.map(fmoS),iD=ms.map(m=>mm[m].i),eD=ms.map(m=>mm[m].e);let r=0;const nD=ms.map(m=>{r+=mm[m].i-mm[m].e;return r;});
   const base={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Rs '+c.parsed.y.toLocaleString()}}},scales:{x:{ticks:{font:{size:10},color:'#888',autoSkip:false,maxRotation:45},grid:{display:false}},y:{ticks:{font:{size:10},color:'#888',callback:v=>'Rs '+(v>=1000?Math.round(v/1000)+'k':v)},grid:{color:'rgba(0,0,0,0.05)'}}}};
   charts['chartIncExp']=new Chart(document.getElementById('chartIncExp').getContext('2d'),{type:'bar',data:{labels:lb,datasets:[{label:'Income',data:iD,backgroundColor:'#6B1A2A',borderRadius:4},{label:'Expenses',data:eD,backgroundColor:'#B3261E',borderRadius:4}]},options:base});
-  charts['chartNet']=new Chart(document.getElementById('chartNet').getContext('2d'),{type:'line',data:{labels:lb,datasets:[{data:nD,borderColor:'#006E30',backgroundColor:'rgba(0,110,48,0.08)',borderWidth:2,pointRadius:4,pointBackgroundColor:'#006E30',fill:true,tension:0.3}]},options:base});
   const sc=[...cols].sort((a,b)=>a.date.localeCompare(b.date));
   charts['chartPin']=new Chart(document.getElementById('chartPin').getContext('2d'),{type:'line',data:{labels:sc.map(c=>fd(c.date)),datasets:[{data:sc.map(c=>c.amount||0),borderColor:'#C9A84C',backgroundColor:'rgba(201,168,76,0.1)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#C9A84C',fill:true,tension:0.3}]},options:{...base,scales:{...base.scales,x:{...base.scales.x,ticks:{...base.scales.x.ticks,autoSkip:true,maxTicksLimit:8}}}}});
 }
@@ -1493,6 +1499,18 @@ window.askDelExp=askDelExp;
 window.askDelDep=askDelDep;
 window.askDelHlog=askDelHlog;
 window.renderGathaLb=renderGathaLb;
+
+// Re-trigger podium animations after render
+const _origRenderGathaLb=renderGathaLb;
+function renderGathaLbAnimated(){
+  _origRenderGathaLb();
+  setTimeout(()=>{
+    ['podium-1','podium-2','podium-3'].forEach((cls,i)=>{
+      const el=document.querySelector('.'+cls);
+      if(el){el.style.animation='none';void el.offsetWidth;el.style.animation='';}
+    });
+  },10);
+}
 window.renderUsers=renderUsers;
 
 // AUTH

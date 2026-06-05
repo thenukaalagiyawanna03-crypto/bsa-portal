@@ -808,7 +808,11 @@ body.dark{
           <button onclick="document.getElementById('gathaSearch').value='';searchGatha('');" style="border:none;background:none;color:var(--ots-v);cursor:pointer;font-size:16px;line-height:1;padding:0;">✕</button>
         </div>
         <div id="gathaSearchResults" style="display:none;" class="card" ><div class="chd"><div class="ct">Search results</div></div><div id="gathaSearchList" style="padding-bottom:8px;"></div></div>
-        <div id="partForm" style="display:none;" class="card-f">
+        <div id="gPodium" class="podium"></div>
+        <div id="gRest"></div>
+        <div class="card"><div class="chd"><div class="ct">Recent gatha log</div></div><div id="gathaLog" style="padding-bottom:8px;"></div></div>
+        <div id="partBtn" style="display:none;margin-top:8px;"><button class="btn btn-t" style="width:100%;" onclick="openPartForm()">🙏 + Record gatha</button></div>
+        <div id="partForm" style="display:none;margin-top:8px;" class="card-f">
           <div style="background:linear-gradient(135deg,var(--bsa),#9B3050);padding:11px 16px;display:flex;align-items:center;gap:8px;">
             <span style="font-size:18px;">🙏</span>
             <span style="font-size:13px;font-weight:600;color:#fff;">Record gatha participation</span>
@@ -832,10 +836,6 @@ body.dark{
             </div>
           </div>
         </div>
-        <div id="partBtn" style="display:none;margin-top:8px;"><button class="btn btn-t" style="width:100%;" onclick="openPartForm()">🙏 + Record gatha</button></div>
-        <div id="gPodium" class="podium"></div>
-        <div id="gRest"></div>
-        <div class="card"><div class="chd"><div class="ct">Recent gatha log</div></div><div id="gathaLog" style="padding-bottom:8px;"></div></div>
       </div>
       <div id="secPin" style="display:none;"><div class="sec-label"><span class="sec-label-badge sl-p">📿 Pin Katte leaderboard</span></div><div class="pin-note">Separate medals — independent from gatha rankings.</div>
         <!-- SU: Record Pin Katte form -->
@@ -2298,3 +2298,4 @@ init();
 </script>
 </body>
 </html>
+

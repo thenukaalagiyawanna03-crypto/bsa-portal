@@ -642,41 +642,6 @@ body.dark{
 .spotlight-score-lbl{font-size:10px;color:rgba(255,255,255,0.7);}
 /* Also make spotlight card clickable-feeling with a link to participation */
 .spotlight{cursor:pointer;}
-
-/* CHART SECTIONS */
-.chart-section{background:var(--sur);border:0.5px solid var(--out-v);border-radius:var(--r-m);padding:16px;margin-bottom:14px;}
-.chart-title{font-size:14px;font-weight:600;color:var(--ots);margin-bottom:3px;}
-.chart-sub{font-size:11px;color:var(--ots-v);margin-bottom:12px;}
-.chart-legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px;}
-.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ots-v);}
-.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
-
-/* ── ANIMATIONS ── */
-
-/* Podium slide up */
-@keyframes podium-rise{from{opacity:0;transform:translateY(40px) scale(0.95);}to{opacity:1;transform:translateY(0) scale(1);}}
-
-/* Notice slide in */
-@keyframes notice-slide{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
-.notice-card{animation:notice-slide 0.4s ease both;}
-
-/* Status badge flash */
-@keyframes status-flash{0%{transform:scale(1);}30%{transform:scale(1.2);}60%{transform:scale(0.95);}100%{transform:scale(1);}}
-.status-flash{animation:status-flash 0.4s cubic-bezier(0.34,1.5,0.64,1);}
-
-/* Confetti */
-.confetti-wrap{position:fixed;pointer-events:none;z-index:9999;top:0;left:0;width:100%;height:100%;}
-@keyframes conf-fall{0%{opacity:1;transform:translateY(-10px) rotate(0deg);}100%{opacity:0;transform:translateY(100vh) rotate(720deg);}}
-
-/* Notification ping */
-@keyframes notif-ping{0%{box-shadow:0 0 0 0 rgba(255,68,68,0.7);}70%{box-shadow:0 0 0 8px rgba(255,68,68,0);}100%{box-shadow:0 0 0 0 rgba(255,68,68,0);}}
-.nav-badge.show{animation:notif-ping 1.5s ease-in-out infinite;}
-
-/* Metric pop */
-@keyframes metric-pop{from{opacity:0;transform:scale(0.85);}to{opacity:1;transform:scale(1);}}
-.metric:nth-child(1){animation:metric-pop 0.4s cubic-bezier(0.34,1.3,0.64,1) 0.05s both;}
-.metric:nth-child(2){animation:metric-pop 0.4s cubic-bezier(0.34,1.3,0.64,1) 0.15s both;}
-.metric:nth-child(3){animation:metric-pop 0.4s cubic-bezier(0.34,1.3,0.64,1) 0.25s both;}
 </style>
 </head>
 <body>
@@ -862,6 +827,7 @@ body.dark{
         <div id="tsH" style="display:none;"><div id="frmH" style="display:none;" class="card-f"><div class="chd"><div class="ct">Log cash entry</div></div><div class="cb"><div class="frow"><div class="field"><label>Date</label><input type="date" id="hDate"/></div><div class="field"><label>Amount (Rs)</label><input type="number" id="hAmt" min="1" max="99999"/></div></div><div class="frow"><div class="field"><label>Type</label><select id="hType"><option value="in">Received</option><option value="out">Returned / spent</option></select></div><div class="field"><label>Reason</label><input type="text" id="hNote" maxlength="120"/></div></div><div id="hErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('frmH')">Cancel</button><button class="btn btn-f" style="background:var(--blu);" onclick="addHlog()">Log</button></div></div></div><div id="addHlogBtn" style="display:none;"><button class="btn btn-t" style="width:100%;margin-bottom:10px;" onclick="show('frmH');document.getElementById('hDate').valueAsDate=new Date();">+ Log cash entry</button></div><div class="card"><div class="chd"><div class="ct">Cash log</div></div><div id="hlogList" style="padding-bottom:8px;"></div></div></div>
         <div id="tsPat" style="display:none;">
           <div class="chart-section"><div class="chart-title">Income vs Expenses</div><div class="chart-sub">Monthly comparison</div><div class="chart-legend"><span class="legend-item"><span class="legend-dot" style="background:#6B1A2A;"></span>Income</span><span class="legend-item"><span class="legend-dot" style="background:#B3261E;"></span>Expenses</span></div><div style="position:relative;width:100%;height:200px;"><canvas id="chartIncExp"></canvas></div></div>
+          <div class="chart-section"><div class="chart-title">Net balance trend</div><div class="chart-sub">Running net balance</div><div class="chart-legend"><span class="legend-item"><span class="legend-dot" style="background:#006E30;border-radius:50%;"></span>Net balance</span></div><div style="position:relative;width:100%;height:180px;"><canvas id="chartNet"></canvas></div></div>
           <div class="chart-section"><div class="chart-title">Pin Katte collection trend</div><div class="chart-sub">Weekly amounts</div><div class="chart-legend"><span class="legend-item"><span class="legend-dot" style="background:#C9A84C;border-radius:50%;"></span>Collection (Rs)</span></div><div style="position:relative;width:100%;height:180px;"><canvas id="chartPin"></canvas></div></div>
         </div>
       </div>
@@ -1267,10 +1233,9 @@ function ncHtml(n,arch){
   const isNew=!seenN.has(n.id)&&!arch;const r=myReacts[n.id]||{};const ack=myAcks[n.id]||false;
   const ackH=n.priority==='urgent'&&isMem()?`<button class="ack-btn ${ack?'done':''}" onclick="togAck('${n.id}')">${ack?'✓ I\'ve read this':'Mark as read'}</button><span class="ack-count">${n.acks||0} of ${n.totalMembers||0} read</span>`:`<span class="ack-count">${(n.thumbs||0)+(n.heart||0)} reactions</span>`;
   const dH=isCom()&&!arch?`<div class="nc-band-del"><button onclick="askDelN('${n.id}','${san(n.title).replace(/'/g,"\\'")}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> Delete</button></div>`:'';
-  const _d=(_ncIdx++)*0.07;return`<div class="notice-card ${n.priority}${arch?' archived':''}" style="animation-delay:${_d}s" id="nc${n.id}"><div class="nc-band ${n.priority}"><div class="nc-band-dot"></div><span class="nc-band-label">${BL[n.priority]}</span><span class="nc-band-title">${san(n.title)}</span>${isNew?'<span class="nc-new-badge">NEW</span>':''}${dH}${arch?'<span style="font-size:10px;color:rgba(255,255,255,0.7);margin-left:auto;">Archived</span>':''}</div><div class="nc-body-wrap"><div class="nc-body">${san(n.body)}</div>${n.image&&n.image.startsWith('https://')?`<img class="nc-image" src="${n.image}" onerror="this.style.display='none'"/>`:''}<div class="nc-meta-row"><span class="nc-date">${fd(n.date)}</span>${expBadge(n,arch)}</div></div>${!arch&&isMem()?`<div class="nc-footer"><button class="react-btn ${r.thumbs?'reacted-hf':''}" onclick="togReact('${n.id}','thumbs')">👍 ${n.thumbs||0}</button><button class="react-btn ${r.heart?'reacted-ht':''}" onclick="togReact('${n.id}','heart')">❤️ ${n.heart||0}</button>${ackH}</div>`:''}</div>`;
+  return`<div class="notice-card ${n.priority}${arch?' archived':''}" id="nc${n.id}"><div class="nc-band ${n.priority}"><div class="nc-band-dot"></div><span class="nc-band-label">${BL[n.priority]}</span><span class="nc-band-title">${san(n.title)}</span>${isNew?'<span class="nc-new-badge">NEW</span>':''}${dH}${arch?'<span style="font-size:10px;color:rgba(255,255,255,0.7);margin-left:auto;">Archived</span>':''}</div><div class="nc-body-wrap"><div class="nc-body">${san(n.body)}</div>${n.image&&n.image.startsWith('https://')?`<img class="nc-image" src="${n.image}" onerror="this.style.display='none'"/>`:''}<div class="nc-meta-row"><span class="nc-date">${fd(n.date)}</span>${expBadge(n,arch)}</div></div>${!arch&&isMem()?`<div class="nc-footer"><button class="react-btn ${r.thumbs?'reacted-hf':''}" onclick="togReact('${n.id}','thumbs')">👍 ${n.thumbs||0}</button><button class="react-btn ${r.heart?'reacted-ht':''}" onclick="togReact('${n.id}','heart')">❤️ ${n.heart||0}</button>${ackH}</div>`:''}</div>`;
 }
-let _ncIdx=0;
-function renderNotices(){_ncIdx=0;const act=notices.filter(n=>!isExp(n)&&(nbFilter==='all'||n.priority===nbFilter));const arch=notices.filter(n=>isExp(n));document.getElementById('noticeEmpty').style.display=(act.length===0&&arch.length===0)?'block':'none';document.getElementById('noticeList').innerHTML=act.map(n=>ncHtml(n,false)).join('');if(arch.length){show('archiveSection');document.getElementById('archiveList').innerHTML=arch.map(n=>ncHtml(n,true)).join('');}else hide('archiveSection');}
+function renderNotices(){const act=notices.filter(n=>!isExp(n)&&(nbFilter==='all'||n.priority===nbFilter));const arch=notices.filter(n=>isExp(n));document.getElementById('noticeEmpty').style.display=(act.length===0&&arch.length===0)?'block':'none';document.getElementById('noticeList').innerHTML=act.map(n=>ncHtml(n,false)).join('');if(arch.length){show('archiveSection');document.getElementById('archiveList').innerHTML=arch.map(n=>ncHtml(n,true)).join('');}else hide('archiveSection');}
 async function togReact(id,type){if(!isMem())return;const n=notices.find(x=>x.id===id);if(!n)return;if(!myReacts[id])myReacts[id]={};const cur=myReacts[id][type]||false;myReacts[id][type]=!cur;await updateDoc(doc(db,'notices',id),{[type]:(n[type]||0)+(cur?-1:1)});}
 window.togReact=togReact;
 async function togAck(id){if(!isMem())return;const n=notices.find(x=>x.id===id);if(!n)return;const cur=myAcks[id]||false;myAcks[id]=!cur;await updateDoc(doc(db,'notices',id),{acks:(n.acks||0)+(cur?-1:1)});}
@@ -1308,9 +1273,9 @@ window.askDelDu=askDelDu;
 
 // GATHA LEADERBOARD
 function calcSc(e){return e.reduce((s,x)=>s+(POINTS[x.gatha]||2),0);}
-function renderGathaLb(){const fg=document.getElementById('lbG').value,per=document.getElementById('lbP').value;let fl=fpf(parts,per);if(fg!=='all')fl=fl.filter(p=>p.gatha===fg);const bn={};fl.forEach(p=>{if(!bn[p.name])bn[p.name]=[];bn[p.name].push(p);});const sc=Object.entries(bn).map(([name,e])=>{const score=calcSc(e);const bd={};e.forEach(x=>{bd[x.gatha]=(bd[x.gatha]||0)+1;});return{name,e,score,bd};}).sort((a,b)=>b.score-a.score);const mx=sc.length?sc[0].score:1;const t3=sc.slice(0,3),rest=sc.slice(3);const cr=['🥇','🥈','🥉'],pc=['podium-1','podium-2','podium-3'];document.getElementById('gPodium').innerHTML=t3.length?t3.map((s,i)=>{const bdg=Object.entries(s.bd).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([g,c])=>`<span class="activity-badge">${san(g)}×${c}(${(POINTS[g]||2)*c}pts)</span>`).join('');return`<div class="${pc[i]}"><div class="podium-crown">${cr[i]}</div><div class="podium-av">${ini(s.name)}</div><div class="podium-body"><div class="podium-name">${san(s.name)}</div><div class="podium-activities">${s.e.length} activit${s.e.length!==1?'ies':'y'}</div><div class="podium-badges">${bdg}</div></div><div class="podium-score-block"><div class="podium-score">${s.score}</div><div class="podium-score-lbl">points</div></div></div>`;}).join(''):'<div class="empty" style="background:var(--sur);border-radius:var(--r-m);padding:24px;">No participation recorded yet.</div>';animatePodium();const rEl=document.getElementById('gRest');if(rest.length){rEl.innerHTML=`<div class="lb-list">${rest.map((s,i)=>{const ta=Object.entries(s.bd).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([g,c])=>`${san(g)}×${c}`).join(', ');return`<div class="lb-item"><div class="lb-rank">${i+4}</div><div class="lb-av g">${ini(s.name)}</div><div class="lb-item-body"><div class="lb-item-name">${san(s.name)}</div><div class="lb-item-acts">${ta}</div></div><div class="lb-score-bar-wrap"><div class="lb-score-bar"><div class="lb-score-fill" style="width:${Math.round(s.score/mx*100)}%"></div></div></div><div class="lb-pts">${s.score}</div></div>`;}).join('')}</div>`;}else rEl.innerHTML='';}
+function renderGathaLb(){const fg=document.getElementById('lbG').value,per=document.getElementById('lbP').value;let fl=fpf(parts,per);if(fg!=='all')fl=fl.filter(p=>p.gatha===fg);const bn={};fl.forEach(p=>{if(!bn[p.name])bn[p.name]=[];bn[p.name].push(p);});const sc=Object.entries(bn).map(([name,e])=>{const score=calcSc(e);const bd={};e.forEach(x=>{bd[x.gatha]=(bd[x.gatha]||0)+1;});return{name,e,score,bd};}).sort((a,b)=>b.score-a.score);const mx=sc.length?sc[0].score:1;const t3=sc.slice(0,3),rest=sc.slice(3);const cr=['🥇','🥈','🥉'],pc=['podium-1','podium-2','podium-3'];document.getElementById('gPodium').innerHTML=t3.length?t3.map((s,i)=>{const bdg=Object.entries(s.bd).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([g,c])=>`<span class="activity-badge">${san(g)}×${c}(${(POINTS[g]||2)*c}pts)</span>`).join('');return`<div class="${pc[i]}"><div class="podium-crown">${cr[i]}</div><div class="podium-av">${ini(s.name)}</div><div class="podium-body"><div class="podium-name">${san(s.name)}</div><div class="podium-activities">${s.e.length} activit${s.e.length!==1?'ies':'y'}</div><div class="podium-badges">${bdg}</div></div><div class="podium-score-block"><div class="podium-score">${s.score}</div><div class="podium-score-lbl">points</div></div></div>`;}).join(''):'<div class="empty" style="background:var(--sur);border-radius:var(--r-m);padding:24px;">No participation recorded yet.</div>';const rEl=document.getElementById('gRest');if(rest.length){rEl.innerHTML=`<div class="lb-list">${rest.map((s,i)=>{const ta=Object.entries(s.bd).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([g,c])=>`${san(g)}×${c}`).join(', ');return`<div class="lb-item"><div class="lb-rank">${i+4}</div><div class="lb-av g">${ini(s.name)}</div><div class="lb-item-body"><div class="lb-item-name">${san(s.name)}</div><div class="lb-item-acts">${ta}</div></div><div class="lb-score-bar-wrap"><div class="lb-score-bar"><div class="lb-score-fill" style="width:${Math.round(s.score/mx*100)}%"></div></div></div><div class="lb-pts">${s.score}</div></div>`;}).join('')}</div>`;}else rEl.innerHTML='';}
 function renderGathaLog(){const rc=parts.slice(0,10);document.getElementById('gathaLog').innerHTML=rc.length?rc.map(p=>`<div class="li"><div class="li-body"><div class="li-t">${san(p.name)}</div><div class="li-s">${fd(p.date)}${p.note?' · '+san(p.note):''}</div></div><div class="li-r"><span class="chip ${GC[p.gatha]||'c-p'}">${san(p.gatha)}</span><span style="font-size:11px;font-weight:600;color:var(--bsa);background:var(--bsa-c);padding:3px 8px;border-radius:var(--r-f);">+${POINTS[p.gatha]||2}pts</span>${isSU()?dB(`askDelPart('${p.id}','${san(p.name).replace(/'/g,"\\'")}')`):''}  </div></div>`).join(''):'<div class="empty">No entries yet.</div>';}
-async function addPart(){if(!isSU())return;const name=san(document.getElementById('pName').value),date=document.getElementById('pDate').value,gatha=document.getElementById('pGatha').value,note=san(document.getElementById('pNote').value),err=document.getElementById('pErr');if(!name||!date){err.textContent='Name and date required.';err.style.display='block';return;}if(!VG.includes(gatha)){err.textContent='Invalid gatha.';err.style.display='block';return;}err.style.display='none';burstConfetti(window.innerWidth/2,window.innerHeight/2);await addDoc(collection(db,'participation'),{name,date,gatha,note,createdAt:serverTimestamp()});document.getElementById('pName').value='';document.getElementById('pNote').value='';hide('partForm');}
+async function addPart(){if(!isSU())return;const name=san(document.getElementById('pName').value),date=document.getElementById('pDate').value,gatha=document.getElementById('pGatha').value,note=san(document.getElementById('pNote').value),err=document.getElementById('pErr');if(!name||!date){err.textContent='Name and date required.';err.style.display='block';return;}if(!VG.includes(gatha)){err.textContent='Invalid gatha.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'participation'),{name,date,gatha,note,createdAt:serverTimestamp()});document.getElementById('pName').value='';document.getElementById('pNote').value='';hide('partForm');}
 window.addPart=addPart;
 async function askDelPart(id,name){if(!isSU())return;askDel(`Delete participation entry for ${name}?`,async()=>{await deleteDoc(doc(db,'participation',id));});}
 window.askDelPart=askDelPart;
@@ -1391,7 +1356,7 @@ async function addPinRec(){
   if(!d||a===null){err.textContent='Valid date and amount required.';err.style.display='block';return;}
   if(!s1){err.textContent='Please enter at least one student name.';err.style.display='block';return;}
   err.style.display='none';
-  burstConfetti(window.innerWidth/2,window.innerHeight/2);await addDoc(collection(db,'collections'),{date:d,amount:a,slip:'',createdAt:serverTimestamp()});
+  await addDoc(collection(db,'collections'),{date:d,amount:a,slip:'',createdAt:serverTimestamp()});
   await addDoc(collection(db,'pins'),{date:d,name:s1,createdAt:serverTimestamp()});
   if(s2)await addDoc(collection(db,'pins'),{date:d,name:s2,createdAt:serverTimestamp()});
   hide('pinRecordForm');
@@ -1415,9 +1380,9 @@ function renderT(){
   if(!isCom()){document.getElementById('tLocked').style.display='block';document.getElementById('tContent').style.display='none';return;}
   document.getElementById('tLocked').style.display='none';document.getElementById('tContent').style.display='block';
   const inc=cols.reduce((s,c)=>s+(c.amount||0),0),exp=exps.reduce((s,e)=>s+(e.amount||0),0);
-  setTimeout(()=>countUp(document.getElementById('mInc'),inc,'Rs ','',900),100);
-  setTimeout(()=>countUp(document.getElementById('mExp'),exp,'Rs ','',900),200);
-  setTimeout(()=>countUp(document.getElementById('mBal'),(inc-exp),'Rs ','',1100),300);
+  document.getElementById('mInc').textContent='Rs '+inc.toLocaleString();
+  document.getElementById('mExp').textContent='Rs '+exp.toLocaleString();
+  document.getElementById('mBal').textContent='Rs '+(inc-exp).toLocaleString();
   document.getElementById('handAmt').textContent='Rs '+(hcur.amount||0).toLocaleString();
   document.getElementById('handNote').textContent=san(hcur.note||'No reason recorded');
   document.getElementById('colList').innerHTML=cols.slice(0,8).length?cols.slice(0,8).map(c=>`<div class="li"><div class="li-body"><div class="li-t">Rs ${(c.amount||0).toLocaleString()}</div><div class="li-s">${fd(c.date)}${c.slip?' · Slip: '+san(c.slip):''}</div></div><div class="li-r"><span class="chip c-g">Pin Katte</span>${isSU()?dB(`askDelCol('${c.id}')`):''}  </div></div>`).join(''):'<div class="empty">No collections yet.</div>';
@@ -1457,6 +1422,7 @@ function drawCharts(){
   const ms=Object.keys(mm).sort(),lb=ms.map(fmoS),iD=ms.map(m=>mm[m].i),eD=ms.map(m=>mm[m].e);let r=0;const nD=ms.map(m=>{r+=mm[m].i-mm[m].e;return r;});
   const base={responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Rs '+c.parsed.y.toLocaleString()}}},scales:{x:{ticks:{font:{size:10},color:'#888',autoSkip:false,maxRotation:45},grid:{display:false}},y:{ticks:{font:{size:10},color:'#888',callback:v=>'Rs '+(v>=1000?Math.round(v/1000)+'k':v)},grid:{color:'rgba(0,0,0,0.05)'}}}};
   charts['chartIncExp']=new Chart(document.getElementById('chartIncExp').getContext('2d'),{type:'bar',data:{labels:lb,datasets:[{label:'Income',data:iD,backgroundColor:'#6B1A2A',borderRadius:4},{label:'Expenses',data:eD,backgroundColor:'#B3261E',borderRadius:4}]},options:base});
+  charts['chartNet']=new Chart(document.getElementById('chartNet').getContext('2d'),{type:'line',data:{labels:lb,datasets:[{data:nD,borderColor:'#006E30',backgroundColor:'rgba(0,110,48,0.08)',borderWidth:2,pointRadius:4,pointBackgroundColor:'#006E30',fill:true,tension:0.3}]},options:base});
   const sc=[...cols].sort((a,b)=>a.date.localeCompare(b.date));
   charts['chartPin']=new Chart(document.getElementById('chartPin').getContext('2d'),{type:'line',data:{labels:sc.map(c=>fd(c.date)),datasets:[{data:sc.map(c=>c.amount||0),borderColor:'#C9A84C',backgroundColor:'rgba(201,168,76,0.1)',borderWidth:2,pointRadius:5,pointBackgroundColor:'#C9A84C',fill:true,tension:0.3}]},options:{...base,scales:{...base.scales,x:{...base.scales.x,ticks:{...base.scales.x.ticks,autoSkip:true,maxTicksLimit:8}}}}});
 }
@@ -1527,18 +1493,6 @@ window.askDelExp=askDelExp;
 window.askDelDep=askDelDep;
 window.askDelHlog=askDelHlog;
 window.renderGathaLb=renderGathaLb;
-
-// Re-trigger podium animations after render
-const _origRenderGathaLb=renderGathaLb;
-function renderGathaLbAnimated(){
-  _origRenderGathaLb();
-  setTimeout(()=>{
-    ['podium-1','podium-2','podium-3'].forEach((cls,i)=>{
-      const el=document.querySelector('.'+cls);
-      if(el){el.style.animation='none';void el.offsetWidth;el.style.animation='';}
-    });
-  },10);
-}
 window.renderUsers=renderUsers;
 
 // AUTH
@@ -2006,11 +1960,10 @@ function renderDashboard(){
   const thisMonthEvts=scheduledEvents.filter(e=>mk(e.date)===mk(today)).length;
   const totalPts=parts.reduce((s,p)=>s+(POINTS[p.gatha]||2),0);
   const bal=cols.reduce((s,c)=>s+(c.amount||0),0)-exps.reduce((s,e)=>s+(e.amount||0),0);
-  const _dsEl=document.getElementById('dashStats');_dsEl.innerHTML=`
+  document.getElementById('dashStats').innerHTML=`
     <div class="dash-stat"><div class="dash-stat-v">${scheduledEvents.length}</div><div class="dash-stat-l">Scheduled programs</div></div>
     <div class="dash-stat"><div class="dash-stat-v">${parts.length}</div><div class="dash-stat-l">Gatha entries</div></div>
     ${isCom()?`<div class="dash-stat"><div class="dash-stat-v" style="font-size:14px;">Rs ${bal.toLocaleString()}</div><div class="dash-stat-l">Treasury balance</div></div>`:`<div class="dash-stat"><div class="dash-stat-v">${totalPts}</div><div class="dash-stat-l">Total points earned</div></div>`}`;
-  setTimeout(()=>{if(document.getElementById('dashStats'))document.getElementById('dashStats').querySelectorAll('.dash-stat-v').forEach(el=>{const n=parseFloat(el.textContent.replace(/[^0-9.]/g,''));const px=el.textContent.includes('Rs')?'Rs ':'';if(!isNaN(n)&&n>0)countUp(el,n,px,'',800);});},50);
 
   // This week events
   const allWeekItems=[
@@ -2263,51 +2216,6 @@ init();
   }
   draw();
 })();
-
-// CONFETTI
-function burstConfetti(x,y){
-  const wrap=document.createElement('div');
-  wrap.className='confetti-wrap';
-  document.body.appendChild(wrap);
-  const colors=['#C9A84C','#6B1A2A','#fff','#F5C28A','#D6F5E3','#FFD700'];
-  for(let i=0;i<28;i++){
-    const el=document.createElement('div');
-    const size=Math.random()*8+4;
-    el.style.cssText=`position:absolute;left:${x}px;top:${y}px;width:${size}px;height:${size}px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>.5?'50%':'2px'};animation:conf-fall ${Math.random()*1+0.8}s ease ${Math.random()*0.3}s both;margin-left:${(Math.random()-.5)*80}px;`;
-    wrap.appendChild(el);
-  }
-  setTimeout(()=>wrap.remove(),2000);
-}
-window.burstConfetti=burstConfetti;
-
-// COUNT-UP
-function countUp(el,target,prefix,suffix,duration){
-  if(!el||isNaN(target))return;
-  prefix=prefix||'';suffix=suffix||'';duration=duration||1000;
-  const start=Date.now();
-  function tick(){
-    const p=Math.min((Date.now()-start)/duration,1);
-    const ease=1-Math.pow(1-p,3);
-    el.textContent=prefix+Math.round(target*ease).toLocaleString()+suffix;
-    if(p<1)requestAnimationFrame(tick);
-    else el.textContent=prefix+Math.round(target).toLocaleString()+suffix;
-  }
-  tick();
-}
-window.countUp=countUp;
-
-// PODIUM animate
-function animatePodium(){
-  ['podium-1','podium-2','podium-3'].forEach((cls,i)=>{
-    const el=document.querySelector('.'+cls);
-    if(el){
-      el.style.animation='none';
-      void el.offsetWidth;
-      el.style.animation=`podium-rise 0.5s cubic-bezier(0.34,1.3,0.64,1) ${i*0.15}s both`;
-    }
-  });
-}
-window.animatePodium=animatePodium;
 </script>
 </body>
 </html>

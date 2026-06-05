@@ -800,10 +800,9 @@ body.dark{
             <span style="font-size:13px;font-weight:600;color:#fff;">Record Pin Katte collection</span>
           </div>
           <div class="cb" style="padding-top:12px;">
-            <div class="snote">Record date, amount collected, and the students who carried the Pin Katte.</div>
+            <div class="snote">Record the date and the students who carried the Pin Katte. Add the collected amount later in Treasury.</div>
             <div class="frow">
               <div class="field"><label>Date</label><input type="date" id="pinRecDate"/></div>
-              <div class="field"><label>Amount (Rs)</label><input type="number" id="pinRecAmt" min="1" max="99999" placeholder="0"/></div>
             </div>
             <div class="frow">
               <div class="field"><label>Student 1</label><input type="text" id="pinRecS1" maxlength="60" placeholder="Full name"/></div>
@@ -1351,7 +1350,6 @@ window.askDelPin=askDelPin;
 function openPinRecForm(){
   if(!isSU())return;
   document.getElementById('pinRecDate').valueAsDate=new Date();
-  document.getElementById('pinRecAmt').value='';
   document.getElementById('pinRecS1').value='';
   document.getElementById('pinRecS2').value='';
   document.getElementById('pinRecErr').style.display='none';
@@ -1364,14 +1362,12 @@ window.closePinRecForm=closePinRecForm;
 async function addPinRec(){
   if(!isSU())return;
   const d=document.getElementById('pinRecDate').value;
-  const a=sanNum(document.getElementById('pinRecAmt').value,1,99999);
   const s1=san(document.getElementById('pinRecS1').value);
   const s2=san(document.getElementById('pinRecS2').value);
   const err=document.getElementById('pinRecErr');
-  if(!d||a===null){err.textContent='Valid date and amount required.';err.style.display='block';return;}
+  if(!d){err.textContent='Please enter a date.';err.style.display='block';return;}
   if(!s1){err.textContent='Please enter at least one student name.';err.style.display='block';return;}
   err.style.display='none';
-  await addDoc(collection(db,'collections'),{date:d,amount:a,slip:'',createdAt:serverTimestamp()});
   await addDoc(collection(db,'pins'),{date:d,name:s1,createdAt:serverTimestamp()});
   if(s2)await addDoc(collection(db,'pins'),{date:d,name:s2,createdAt:serverTimestamp()});
   hide('pinRecordForm');

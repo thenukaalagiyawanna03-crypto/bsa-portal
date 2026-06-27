@@ -655,9 +655,55 @@ body.dark{
 .qa-grid .qa-btn:nth-child(2){animation-delay:.06s;}
 .qa-grid .qa-btn:nth-child(3){animation-delay:.10s;}
 .qa-grid .qa-btn:nth-child(4){animation-delay:.14s;}
+/* WELCOME TOAST */
+.welcome-toast{
+  position:fixed;top:24px;left:50%;
+  transform:translate(-50%,-40px) scale(0.85);
+  background:linear-gradient(145deg,#4A0E1A 0%,var(--bsa) 55%,#9B3050 100%);
+  color:#fff;padding:16px 26px 16px 16px;border-radius:20px;
+  display:flex;align-items:center;gap:14px;
+  box-shadow:0 14px 40px rgba(0,0,0,0.4),0 0 0 1px rgba(201,168,76,0.35),0 0 24px rgba(201,168,76,0.18);
+  z-index:500;opacity:0;
+  pointer-events:none;
+  overflow:hidden;
+}
+.welcome-toast::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,0.12) 45%,transparent 60%);
+  background-size:250% 100%;background-position:150% 0;
+}
+.welcome-toast.show{
+  animation:welcomeIn 0.65s cubic-bezier(0.22,1.4,0.36,1) forwards,
+            welcomeShine 1.1s ease-out forwards 0.5s,
+            welcomeOut 0.55s cubic-bezier(0.4,0,1,1) forwards 2.9s;
+}
+.welcome-toast .wt-icon-wrap{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  background:radial-gradient(circle at 35% 30%,#F5E6C0,var(--gold) 70%);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  box-shadow:0 0 16px rgba(201,168,76,0.55), inset 0 1px 2px rgba(255,255,255,0.6);
+}
+.welcome-toast .wt-text{display:flex;flex-direction:column;gap:1px;}
+.welcome-toast .wt-greet{font-size:10.5px;font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:rgba(255,255,255,0.65);}
+.welcome-toast .wt-name{font-size:16px;font-weight:700;color:#fff;letter-spacing:0.1px;}
+@keyframes welcomeIn{
+  0%{opacity:0;transform:translate(-50%,-40px) scale(0.85);}
+  60%{opacity:1;transform:translate(-50%,4px) scale(1.02);}
+  100%{opacity:1;transform:translate(-50%,0) scale(1);}
+}
+@keyframes welcomeShine{
+  from{background-position:150% 0;}
+  to{background-position:-50% 0;}
+}
+@keyframes welcomeOut{
+  from{opacity:1;transform:translate(-50%,0) scale(1);}
+  to{opacity:0;transform:translate(-50%,-16px) scale(0.92);}
+}
 </style>
 </head>
 <body>
+<div id="welcomeToastContainer"></div>
 <div class="loading-overlay" id="loadingOverlay">
   <canvas id="particleCanvas"></canvas>
   <div class="lo-content">
@@ -1534,6 +1580,16 @@ function showLoginView(){document.getElementById('loginView').style.display='blo
 window.showLoginView=showLoginView;
 function showSignupView(){document.getElementById('loginView').style.display='none';document.getElementById('signupView').style.display='block';['suCode','suName','suUser','suPw'].forEach(i=>document.getElementById(i).value='');document.getElementById('suErr').style.display='none';document.getElementById('suOk').style.display='none';setTimeout(()=>document.getElementById('suCode').focus(),80);}
 window.showSignupView=showSignupView;
+function showWelcomeToast(name){
+  const hour=new Date().getHours();
+  const greet=hour<12?'Good morning':hour<17?'Good afternoon':'Good evening';
+  const el=document.createElement('div');
+  el.className='welcome-toast show';
+  el.innerHTML=`<div class="wt-icon-wrap">🙏</div><div class="wt-text"><span class="wt-greet">${greet}</span><span class="wt-name">${san(name)}</span></div>`;
+  document.getElementById('welcomeToastContainer').appendChild(el);
+  setTimeout(()=>el.remove(),3500);
+}
+window.showWelcomeToast=showWelcomeToast;
 async function doLogin(){
   if(isLocked()){showLockoutUI();return;}
   const username=document.getElementById('liUser').value.trim().toLowerCase();
@@ -1548,6 +1604,7 @@ async function doLogin(){
     if(!safeEq(h,ud.pwHash)){recFail();document.getElementById('liErr').style.display='block';document.getElementById('liPw').value='';if(isLocked())showLockoutUI();return;}
     resetAtt();curUser={id:uDoc.id,...ud};mkSess(curUser.id);closeDlg('loginDlg');
     applyRole();startListeners();renderT();renderRep();
+    showWelcomeToast(curUser.name?.split(' ')[0]||curUser.username);
   }catch(e){console.error('Login error:',e);document.getElementById('liErr').textContent='Connection error. Try again.';document.getElementById('liErr').style.display='block';}
 }
 window.doLogin=doLogin;
@@ -1590,6 +1647,7 @@ async function doSignup(){
     if(approved){
       curUser={id:newId,username,name,role,approved};mkSess(newId);closeDlg('loginDlg');
       applyRole();startListeners();renderT();renderRep();
+      showWelcomeToast(name?.split(' ')[0]||username);
     } else {
       ok.textContent='Account created! A Super User needs to approve you before you can sign in.';ok.style.display='block';
       btn.disabled=false;btn.textContent='Create account';

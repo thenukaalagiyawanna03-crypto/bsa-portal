@@ -56,6 +56,12 @@ body.dark{
 @media(min-width:1200px){
   .app{max-width:1140px;}
 }
+@media(min-width:1600px){
+  .app{max-width:1400px;}
+}
+@media(min-width:1900px){
+  .app{max-width:1600px;}
+}
 /* TOPBAR */
 .topbar{
   background:var(--bsa);
@@ -1918,7 +1924,6 @@ function renderEvtTrack(){
   document.getElementById('evtTrackContent').style.display='block';
   document.getElementById('schedBtn').style.display=isCom()?'block':'none';
   let visible=scheduledEvents;
-  if(!isCom())visible=scheduledEvents.filter(e=>(e.activities||[]).some(a=>a.owner===curUser?.username));
   const listEl=document.getElementById('evtTrackList');
   const emptyEl=document.getElementById('evtTrackEmpty');
   if(!listEl)return;

@@ -700,6 +700,25 @@ body.dark{
   from{opacity:1;transform:translate(-50%,0) scale(1);}
   to{opacity:0;transform:translate(-50%,-16px) scale(0.92);}
 }
+/* ACTIVITY LOG */
+.log-item{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--sur-c);align-items:flex-start;}
+.log-item:last-child{border-bottom:none;}
+.log-icon{width:32px;height:32px;border-radius:50%;background:var(--bsa-c);color:var(--bsa);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.log-body{flex:1;min-width:0;}
+.log-text{font-size:13px;color:var(--ots);line-height:1.5;}
+.log-text b{font-weight:600;color:var(--bsa);}
+.log-time{font-size:11px;color:var(--ots-v);margin-top:2px;}
+/* ROLE TAG — sits under subtitle, never crowds the header */
+.role-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  margin-top:4px;
+  font-size:9.5px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;
+  padding:2px 8px;border-radius:var(--r-f);
+  width:fit-content;
+}
+.role-tag.member{background:rgba(255,255,255,0.15);color:#fff;}
+.role-tag.committee{background:rgba(255,220,100,0.22);color:#FFE082;}
+.role-tag.superuser{background:rgba(201,168,76,0.28);color:#F5E6C0;border:1px solid rgba(201,168,76,0.4);}
 </style>
 </head>
 <body>
@@ -721,7 +740,11 @@ body.dark{
 <div class="app" id="app" style="display:none;">
   <div class="topbar">
     <div class="tb-logo" style="display:flex;align-items:center;justify-content:center;"><span style="font-size:13px;font-weight:800;color:#6B1A2A;letter-spacing:0.5px;line-height:1;">BSA</span></div>
-    <div class="tb-text"><h1>Buddhist Students' Association</h1><p>S. Thomas' College, Mount Lavinia</p></div>
+    <div class="tb-text">
+      <h1>Buddhist Students' Association</h1>
+      <p>S. Thomas' College, Mount Lavinia</p>
+      <span class="role-tag" id="roleTag" style="display:none;"></span>
+    </div>
     <div class="tb-right">
       <button class="ibtn" id="darkBtn" onclick="toggleDark()" title="Toggle dark mode">
         <svg id="darkIcon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
@@ -747,6 +770,7 @@ body.dark{
     <button class="ntab" id="navMinutes" onclick="showTab('minutes',this)" style="display:none;">📝 Minutes</button>
     <button class="ntab" id="navEvents" onclick="showTab('events',this)" style="display:none;">📊 Programs</button>
     <button class="ntab" id="navUsers" onclick="showTab('users',this)" style="display:none;">👥 Users</button>
+    <button class="ntab" id="navLog" onclick="showTab('actlog',this)" style="display:none;">📜 Activity Log</button>
   </div>
   <div class="content">
     <!-- HOME DASHBOARD -->
@@ -858,7 +882,7 @@ body.dark{
         <div id="partBtn" style="display:none;margin-bottom:12px;"><button class="btn btn-t" style="width:100%;" onclick="openPartForm()">🙏 + Record gatha</button></div>
         <div id="gPodium" class="podium"></div>
         <div id="gRest"></div>
-        <div class="card"><div class="chd"><div class="ct">Recent gatha log</div></div><div id="gathaLog" style="padding-bottom:8px;"></div></div>
+        <div class="card"><div class="chd" style="cursor:pointer;" onclick="toggleLogSection('gathaLog','gathaLogArrow')"><div class="ct">Recent gatha log</div><span id="gathaLogArrow" style="font-size:12px;color:var(--ots-v);transition:transform 0.2s;">▶</span></div><div id="gathaLog" style="padding-bottom:8px;display:none;"></div></div>
       </div>
       <div id="secPin" style="display:none;"><div class="sec-label"><span class="sec-label-badge sl-p">📿 Pin Katte leaderboard</span></div><div class="pin-note">Separate medals — independent from gatha rankings.</div>
         <!-- SU: Record Pin Katte form -->
@@ -892,7 +916,7 @@ body.dark{
         <div class="filter-bar"><select id="pinP" onchange="renderPinLb()"><option value="all">All time</option><option value="month">This month</option><option value="term">This term</option></select></div>
         <div id="pinForm" style="display:none;" class="card-f"><div class="chd"><div class="ct">Record Pin Katte</div></div><div class="cb"><div class="frow"><div class="field"><label>Student name</label><input type="text" id="pinName" maxlength="60" placeholder="Full name"/></div><div class="field"><label>Date</label><input type="date" id="pinDate"/></div></div><div id="pinErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('pinForm')">Cancel</button><button class="btn btn-f" onclick="addPin()">Record</button></div></div></div>
         <div id="pinBtn" style="display:none;margin-bottom:12px;"><button class="btn btn-t" style="width:100%;" onclick="show('pinForm');document.getElementById('pinDate').valueAsDate=new Date();">+ Record Pin Katte</button></div>
-        <div id="pinPodium" class="podium"></div><div id="pinRest"></div><div class="card"><div class="chd"><div class="ct">Recent Pin Katte log</div></div><div id="pinLog" style="padding-bottom:8px;"></div></div></div>
+        <div id="pinPodium" class="podium"></div><div id="pinRest"></div><div class="card"><div class="chd" style="cursor:pointer;" onclick="toggleLogSection('pinLog','pinLogArrow')"><div class="ct">Recent Pin Katte log</div><span id="pinLogArrow" style="font-size:12px;color:var(--ots-v);transition:transform 0.2s;">▶</span></div><div id="pinLog" style="padding-bottom:8px;display:none;"></div></div></div>
       <div id="secFeedback" style="display:none;"><div class="sec-label"><span class="sec-label-badge sl-f">⭐ Ratings &amp; Feedback</span></div><div id="fbForm" style="display:none;" class="card-f"><div class="chd"><div class="ct">Give feedback</div></div><div class="cb"><div class="frow"><div class="field"><label>Student name</label><input type="text" id="fbName" maxlength="60" placeholder="Full name" list="studentNames"/><datalist id="studentNames"></datalist></div><div class="field"><label>Gatha performed</label><select id="fbGatha"><option>Pansil</option><option>Karaniya Metta</option><option>Bavana</option><option>Jataka Katha</option><option>Life Talk</option><option>Video</option><option>Other</option></select></div></div><div class="field"><label>Star rating</label><div style="display:flex;gap:4px;margin-bottom:4px;"><button class="star-btn" onclick="setStar(1)">★</button><button class="star-btn" onclick="setStar(2)">★</button><button class="star-btn" onclick="setStar(3)">★</button><button class="star-btn" onclick="setStar(4)">★</button><button class="star-btn" onclick="setStar(5)">★</button></div></div><div class="field"><label>Written feedback</label><textarea id="fbText" maxlength="400" placeholder="e.g. Excellent pronunciation..."></textarea></div><div class="field"><label>Date</label><input type="date" id="fbDate"/></div><div id="fbErr" class="err" style="display:none;"></div><div class="btn-row"><button class="btn btn-o" onclick="hide('fbForm')">Cancel</button><button class="btn btn-f" onclick="addFeedback()">Submit</button></div></div></div><div id="fbBtn" style="display:none;margin-bottom:12px;"><button class="btn btn-t" style="width:100%;" onclick="openFbForm()">+ Give feedback</button></div><div id="fbList"></div><div id="fbEmpty" class="empty" style="display:none;">No feedback yet.</div></div>
     </div>
     <!-- TREASURY -->
@@ -946,6 +970,25 @@ body.dark{
           <div class="chd"><div class="ct">All users</div><span style="font-size:12px;color:var(--ots-v);" id="userCountEl"></span></div>
           <div id="userList" style="padding-bottom:8px;"></div>
         </div>
+      </div>
+    </div>
+    <!-- ACTIVITY LOG -->
+    <div class="sec" id="actlog">
+      <div id="logLocked" class="locked"><div class="locked-box"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.5"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div><div class="locked-h">Access restricted</div><div class="locked-b">Activity Log is visible to Committee Members and above.</div><button class="btn btn-f" onclick="toggleLogin()">Sign in</button></div>
+      <div id="logContent" style="display:none;">
+        <div class="snote" style="margin-bottom:12px;">Every action below shows who did what, and when — for full transparency and accountability.</div>
+        <div class="filter-bar">
+          <select id="logFilter" onchange="renderActivityLog()">
+            <option value="all">All actions</option>
+            <option value="notice">Notices</option>
+            <option value="assembly">Assembly</option>
+            <option value="participation">Participation</option>
+            <option value="treasury">Treasury</option>
+            <option value="program">Programs</option>
+            <option value="user">Users</option>
+          </select>
+        </div>
+        <div class="card"><div class="chd"><div class="ct">Recent activity</div></div><div id="actLogList" style="padding-bottom:8px;"></div></div>
       </div>
     </div>
     <!-- MEETING MINUTES -->
@@ -1166,7 +1209,7 @@ let charts={};
 let unsubs=[];
 const today=new Date().toISOString().slice(0,10);
 // Data caches
-let notices=[],events=[],duties={},parts=[],pins=[],feedbacks=[],cols=[],exps=[],deps=[],hlogs=[],hcur={amount:0,note:'No reason recorded'};
+let notices=[],events=[],duties={},parts=[],pins=[],feedbacks=[],cols=[],exps=[],deps=[],hlogs=[],hcur={amount:0,note:'No reason recorded'},activityLog=[];
 let eventTemplates=[],scheduledEvents=[],minutes=[];
 let curInviteCode='';
 function saveSeen(){localStorage.setItem('bK_sn',JSON.stringify([...seenN]));localStorage.setItem('bK_sc',JSON.stringify([...seenC]));}
@@ -1183,6 +1226,20 @@ const rl=()=>curUser?{member:1,committee:2,superuser:3}[curUser.role]||0:0;
 const isSU=()=>rl()>=3;
 const isCom=()=>rl()>=2;
 const isMem=()=>rl()>=1;
+// ACTIVITY LOG — records who did what, when, for accountability
+async function logAction(category,text){
+  if(!curUser)return;
+  try{
+    await addDoc(collection(db,'activityLog'),{
+      category,text,
+      userId:curUser.id,
+      userName:curUser.name||curUser.username,
+      userRole:curUser.role,
+      createdAt:serverTimestamp()
+    });
+  }catch(e){console.error('logAction error:',e);}
+}
+window.logAction=logAction;
 // BOOTSTRAP — create default superuser if no users exist
 async function bootstrap(){
   try{
@@ -1209,6 +1266,7 @@ function startListeners(){
   unsubs.push(onSnapshot(doc(db,'config','cashInHand'),(s)=>{hcur=s.exists()?s.data():{amount:0,note:'No reason recorded'};if(isCom()){document.getElementById('handAmt').textContent='Rs '+(hcur.amount||0).toLocaleString();document.getElementById('handNote').textContent=san(hcur.note||'No reason recorded');}}));
   unsubs.push(onSnapshot(query(collection(db,'eventTemplates'),orderBy('createdAt','desc')),(s)=>{eventTemplates=s.docs.map(d=>({id:d.id,...d.data()}));populateSchedTpl();}));
   unsubs.push(onSnapshot(query(collection(db,'minutes'),orderBy('createdAt','desc')),(s)=>{minutes=s.docs.map(d=>({id:d.id,...d.data()}));renderMinutes();}));
+  unsubs.push(onSnapshot(query(collection(db,'activityLog'),orderBy('createdAt','desc')),(s)=>{activityLog=s.docs.map(d=>({id:d.id,...d.data()}));if(isCom())renderActivityLog();}));
 }
 // HELPERS
 function fd(d){return new Date(d+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
@@ -1227,11 +1285,20 @@ function applyRole(){
   document.getElementById('loginBtn').innerHTML=curUser
     ?'<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>'
     :'<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>';
+  const roleTag=document.getElementById('roleTag');
+  if(curUser){
+    roleTag.textContent=RL[curUser.role]||curUser.role;
+    roleTag.className='role-tag '+curUser.role;
+    roleTag.style.display='inline-flex';
+  } else {
+    roleTag.style.display='none';
+  }
   document.getElementById('navTres').style.display=isCom()?'block':'none';
   document.getElementById('navRep').style.display=isCom()?'block':'none';
   document.getElementById('navMinutes').style.display=isCom()?'block':'none';
   document.getElementById('navEvents').style.display=isMem()?'block':'none';
   document.getElementById('navUsers').style.display=isSU()?'block':'none';
+  document.getElementById('navLog').style.display=isCom()?'block':'none';
   document.getElementById('calScheduleHint').style.display=isCom()?'block':'none';
   document.getElementById('asmBtn').style.display=isCom()?'block':'none';
   document.getElementById('partBtn').style.display=isSU()&&activeTab==='gatha'?'block':'none';
@@ -1258,6 +1325,7 @@ function showTab(id,btn){
   if(id==='events')renderEvtTrack();
   if(id==='events'){renderEvtTrack();populateSchedTpl();}
   if(id==='users')renderUsers();
+  if(id==='actlog')renderActivityLog();
   if(id==='home'){showSkelHome();renderDashboard();}
 }
 window.showTab=showTab;
@@ -1298,7 +1366,7 @@ window.setNbF=setNbF;
 function expBadge(n,arch){if(!n.expiry||arch)return'';const du=dU(n.expiry);if(du<=0)return`<span class="nc-expiry expired-lbl">✕ Expired ${fd(n.expiry)}</span>`;if(du<=2)return`<span class="nc-expiry urgent-exp">⚠ Expires in ${du} day${du!==1?'s':''}!</span>`;if(du<=7)return`<span class="nc-expiry soon">⏰ Expires in ${du} days</span>`;return`<span class="nc-expiry far">✓ Expires ${fd(n.expiry)}</span>`;}
 function ncHtml(n,arch){
   const isNew=!seenN.has(n.id)&&!arch;const r=myReacts[n.id]||{};const ack=myAcks[n.id]||false;
-  const ackH=n.priority==='urgent'&&isMem()?`<button class="ack-btn ${ack?'done':''}" onclick="togAck('${n.id}')">${ack?'✓ I\'ve read this':'Mark as read'}</button><span class="ack-count">${n.acks||0} of ${n.totalMembers||0} read</span>`:`<span class="ack-count">${(n.thumbs||0)+(n.heart||0)} reactions</span>`;
+  const ackH=isMem()?`<button class="ack-btn ${ack?'done':''}" onclick="togAck('${n.id}')">${ack?'✓ Read':'Mark as read'}</button><span class="ack-count">${n.acks||0} of ${n.totalMembers||0} read</span>`:`<span class="ack-count">${(n.thumbs||0)+(n.heart||0)} reactions</span>`;
   const dH=isCom()&&!arch?`<div class="nc-band-del"><button onclick="askDelN('${n.id}','${san(n.title).replace(/'/g,"\\'")}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> Delete</button></div>`:'';
   return`<div class="notice-card ${n.priority}${arch?' archived':''}" id="nc${n.id}"><div class="nc-band ${n.priority}"><div class="nc-band-dot"></div><span class="nc-band-label">${BL[n.priority]}</span><span class="nc-band-title">${san(n.title)}</span>${isNew?'<span class="nc-new-badge">NEW</span>':''}${dH}${arch?'<span style="font-size:10px;color:rgba(255,255,255,0.7);margin-left:auto;">Archived</span>':''}</div><div class="nc-body-wrap"><div class="nc-body">${san(n.body)}</div>${n.image&&n.image.startsWith('https://')?`<img class="nc-image" src="${n.image}" onerror="this.style.display='none'"/>`:''}<div class="nc-meta-row"><span class="nc-date">${fd(n.date)}</span>${expBadge(n,arch)}</div></div>${!arch&&isMem()?`<div class="nc-footer"><button class="react-btn ${r.thumbs?'reacted-hf':''}" onclick="togReact('${n.id}','thumbs')">👍 ${n.thumbs||0}</button><button class="react-btn ${r.heart?'reacted-ht':''}" onclick="togReact('${n.id}','heart')">❤️ ${n.heart||0}</button>${ackH}</div>`:''}</div>`;
 }
@@ -1318,10 +1386,11 @@ async function postNotice(){
   const usSnap=await getDocs(collection(db,'users'));
   const totalMembers=usSnap.docs.filter(d=>d.data().approved).length;
   await addDoc(collection(db,'notices'),{title,body,priority,date:today,expiry,image:img.startsWith('https://')?img:'',thumbs:0,heart:0,acks:0,totalMembers,createdAt:serverTimestamp()});
+  logAction('notice',`posted a ${priority} notice: "${title}"`);
   hide('noticeForm');['nTitle','nBody','nExpiry','nImage'].forEach(i=>document.getElementById(i).value='');
 }
 window.postNotice=postNotice;
-async function askDelN(id,title){if(!isCom())return;askDel(`Delete notice: "${title}"?`,async()=>{await deleteDoc(doc(db,'notices',id));});}
+async function askDelN(id,title){if(!isCom())return;askDel(`Delete notice: "${title}"?`,async()=>{await deleteDoc(doc(db,'notices',id));logAction('notice',`deleted the notice "${title}"`);});}
 window.askDelN=askDelN;
 // CALENDAR
 function renderEv(){document.getElementById('evtList').innerHTML=events.length?events.map(e=>{const{day,mon}=fdy(e.date);const isNew=!seenC.has(e.id)&&dSince(e.addedDate||today)<=3;return`<div class="li"><div style="width:40px;height:40px;background:var(--bsa-c);border-radius:var(--r-s);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;"><span style="font-size:16px;font-weight:500;color:var(--bsa);line-height:1;">${day}</span><span style="font-size:10px;color:var(--bsa);text-transform:uppercase;">${mon}</span></div><div class="li-body"><div class="li-t" style="display:flex;align-items:center;gap:6px;">${san(e.name)}${isNew?'<span style="font-size:9px;font-weight:700;background:#FF4444;color:#fff;padding:2px 6px;border-radius:10px;">NEW</span>':''}</div><div class="li-s">${san(e.person)}</div></div><div class="li-r"><span class="chip ${EC[e.type]||'c-b'}">${TL2[e.type]||'Other'}</span>${isCom()?dB(`askDelEv('${e.id}','${san(e.name).replace(/'/g,"\\'")}')`):''}  </div></div>`;}).join(''):'<div class="empty">No upcoming programs.</div>';}
@@ -1330,10 +1399,28 @@ window.addEvt=addEvt;
 async function askDelEv(id,name){if(!isCom())return;askDel(`Delete "${name}" from the calendar?`,async()=>{await deleteDoc(doc(db,'events',id));});}
 window.askDelEv=askDelEv;
 // ASSEMBLY
-function renderAsm(){const days=['Monday','Tuesday','Thursday','Friday'];document.getElementById('asmGrid').innerHTML=days.map(day=>`<div class="asm-card"><div class="asm-head"><div class="asm-hl">${day}</div></div><div class="asm-body">${(duties[day]||[]).map((d,i)=>`<div class="asm-duty"><span class="asm-tk">${san(d.task)}</span><div style="display:flex;align-items:center;gap:4px;"><span class="asm-ps">${san(d.person)}</span>${isCom()?`<button class="del-btn" style="padding:3px 7px;font-size:11px;" onclick="askDelDu('${day}',${i},'${san(d.person)}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>`:''}</div></div>`).join('')}</div></div>`).join('');}
-async function addDuty(){if(!isCom())return;const day=document.getElementById('asmDay').value,task=document.getElementById('asmTask').value,person=san(document.getElementById('asmPerson').value);if(!person||!VD.includes(day)||!VT.includes(task))return;const upd={...duties};if(!upd[day])upd[day]=[];upd[day]=[...upd[day],{task,person}];await setDoc(doc(db,'config','duties'),upd);document.getElementById('asmPerson').value='';hide('asmForm');}
+const COMPULSORY_DUTIES=['Pansil','Karaniya Metta','Bavana','Jataka Katha'];
+function renderAsm(){
+  const days=['Monday','Tuesday','Thursday','Friday'];
+  document.getElementById('asmGrid').innerHTML=days.map(day=>{
+    const assigned=duties[day]||[];
+    // Build a display list: compulsory duties first (showing assigned person or "Not yet assigned"),
+    // followed by any other extra duties (Life Talk, Video etc.) that were specifically added.
+    const compulsoryRows=COMPULSORY_DUTIES.map(task=>{
+      const match=assigned.find(d=>d.task===task);
+      const idx=match?assigned.indexOf(match):-1;
+      return{task,person:match?match.person:'',idx,isCompulsory:true};
+    });
+    const extraRows=assigned
+      .map((d,i)=>({...d,idx:i}))
+      .filter(d=>!COMPULSORY_DUTIES.includes(d.task));
+    const allRows=[...compulsoryRows,...extraRows];
+    return`<div class="asm-card"><div class="asm-head"><div class="asm-hl">${day}</div></div><div class="asm-body">${allRows.map(d=>`<div class="asm-duty"><span class="asm-tk">${san(d.task)}</span><div style="display:flex;align-items:center;gap:4px;">${d.person?`<span class="asm-ps">${san(d.person)}</span>`:`<span class="asm-ps" style="color:var(--ots-t);font-style:italic;">Not yet assigned</span>`}${isCom()&&d.idx>=0?`<button class="del-btn" style="padding:3px 7px;font-size:11px;" onclick="askDelDu('${day}',${d.idx},'${san(d.person)}')"><svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>`:''}</div></div>`).join('')}</div></div>`;
+  }).join('');
+}
+async function addDuty(){if(!isCom())return;const day=document.getElementById('asmDay').value,task=document.getElementById('asmTask').value,person=san(document.getElementById('asmPerson').value);if(!person||!VD.includes(day)||!VT.includes(task))return;const upd={...duties};if(!upd[day])upd[day]=[];upd[day]=[...upd[day],{task,person}];await setDoc(doc(db,'config','duties'),upd);logAction('assembly',`assigned ${person} to ${task} on ${day}`);document.getElementById('asmPerson').value='';hide('asmForm');}
 window.addDuty=addDuty;
-async function askDelDu(day,idx,person){if(!isCom())return;askDel(`Remove ${person} from ${day} duties?`,async()=>{const upd={...duties};upd[day]=[...upd[day]];upd[day].splice(idx,1);await setDoc(doc(db,'config','duties'),upd);});}
+async function askDelDu(day,idx,person){if(!isCom())return;askDel(`Remove ${person} from ${day} duties?`,async()=>{const upd={...duties};upd[day]=[...upd[day]];upd[day].splice(idx,1);await setDoc(doc(db,'config','duties'),upd);logAction('assembly',`removed ${person} from ${day} duties`);});}
 window.askDelDu=askDelDu;
 // GATHA LEADERBOARD
 function calcSc(e){return e.reduce((s,x)=>s+(POINTS[x.gatha]||2),0);}
@@ -1349,9 +1436,9 @@ function openPartForm(){
 window.openPartForm=openPartForm;
 function closePartForm(){hide('partForm');if(isSU()&&activeTab==='gatha')show('partBtn');}
 window.closePartForm=closePartForm;
-async function addPart(){if(!isSU())return;const name=san(document.getElementById('pName').value),date=document.getElementById('pDate').value,gatha=document.getElementById('pGatha').value,note=san(document.getElementById('pNote').value),err=document.getElementById('pErr');if(!name||!date){err.textContent='Name and date required.';err.style.display='block';return;}if(!VG.includes(gatha)){err.textContent='Invalid gatha.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'participation'),{name,date,gatha,note,createdAt:serverTimestamp()});document.getElementById('pName').value='';document.getElementById('pNote').value='';hide('partForm');show('partBtn');}
+async function addPart(){if(!isSU())return;const name=san(document.getElementById('pName').value),date=document.getElementById('pDate').value,gatha=document.getElementById('pGatha').value,note=san(document.getElementById('pNote').value),err=document.getElementById('pErr');if(!name||!date){err.textContent='Name and date required.';err.style.display='block';return;}if(!VG.includes(gatha)){err.textContent='Invalid gatha.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'participation'),{name,date,gatha,note,createdAt:serverTimestamp()});logAction('participation',`recorded ${name}'s gatha participation (${gatha})`);document.getElementById('pName').value='';document.getElementById('pNote').value='';hide('partForm');show('partBtn');}
 window.addPart=addPart;
-async function askDelPart(id,name){if(!isSU())return;askDel(`Delete participation entry for ${name}?`,async()=>{await deleteDoc(doc(db,'participation',id));});}
+async function askDelPart(id,name){if(!isSU())return;askDel(`Delete participation entry for ${name}?`,async()=>{await deleteDoc(doc(db,'participation',id));logAction('participation',`deleted ${name}'s gatha entry`);});}
 window.askDelPart=askDelPart;
 // PIN KATTE
 function renderPinLb(){
@@ -1399,10 +1486,20 @@ function renderPinLb(){
   } else rEl.innerHTML='';
 }
 function renderPinLog(){const rc=pins.slice(0,10);document.getElementById('pinLog').innerHTML=rc.length?rc.map(p=>`<div class="li"><div class="li-body"><div class="li-t">${san(p.name)}</div><div class="li-s">${fd(p.date)}</div></div><div class="li-r"><span class="chip" style="background:#FFF8E1;color:#5C3D00;border:1px solid #FFD54F;">📿 Pin Katte</span>${isSU()?dB(`askDelPin('${p.id}','${san(p.name).replace(/'/g,"\\'")}')`):''}  </div></div>`).join(''):'<div class="empty">No entries yet.</div>';}
-async function addPin(){if(!isSU())return;const name=san(document.getElementById('pinName').value),date=document.getElementById('pinDate').value,err=document.getElementById('pinErr');if(!name||!date){err.textContent='Name and date required.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'pins'),{date,name,createdAt:serverTimestamp()});document.getElementById('pinName').value='';hide('pinForm');}
+async function addPin(){if(!isSU())return;const name=san(document.getElementById('pinName').value),date=document.getElementById('pinDate').value,err=document.getElementById('pinErr');if(!name||!date){err.textContent='Name and date required.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'pins'),{date,name,createdAt:serverTimestamp()});logAction('participation',`recorded ${name} carrying Pin Katte`);document.getElementById('pinName').value='';hide('pinForm');}
 window.addPin=addPin;
-async function askDelPin(id,name){if(!isSU())return;askDel(`Delete Pin Katte entry for ${name}?`,async()=>{await deleteDoc(doc(db,'pins',id));});}
+async function askDelPin(id,name){if(!isSU())return;askDel(`Delete Pin Katte entry for ${name}?`,async()=>{await deleteDoc(doc(db,'pins',id));logAction('participation',`deleted ${name}'s Pin Katte entry`);});}
 window.askDelPin=askDelPin;
+
+function toggleLogSection(logId,arrowId){
+  const logEl=document.getElementById(logId);
+  const arrowEl=document.getElementById(arrowId);
+  const isOpen=logEl.style.display!=='none';
+  logEl.style.display=isOpen?'none':'block';
+  arrowEl.style.transform=isOpen?'rotate(0deg)':'rotate(90deg)';
+}
+window.toggleLogSection=toggleLogSection;
+
 // PIN KATTE SU RECORD FORM
 function openPinRecForm(){
   if(!isSU())return;
@@ -1436,9 +1533,9 @@ function setStar(v){selectedStar=v;document.querySelectorAll('.star-btn').forEac
 window.setStar=setStar;
 function openFbForm(){if(!isCom())return;const names=[...new Set(parts.map(p=>p.name))];document.getElementById('studentNames').innerHTML=names.map(n=>`<option value="${san(n)}">`).join('');selectedStar=0;document.querySelectorAll('.star-btn').forEach(b=>b.style.color='#e0e0e0');['fbName','fbText'].forEach(i=>document.getElementById(i).value='');document.getElementById('fbDate').valueAsDate=new Date();document.getElementById('fbErr').style.display='none';show('fbForm');}
 window.openFbForm=openFbForm;
-async function addFeedback(){if(!isCom())return;const name=san(document.getElementById('fbName').value),gatha=document.getElementById('fbGatha').value,text=san(document.getElementById('fbText').value),date=document.getElementById('fbDate').value,err=document.getElementById('fbErr');if(!name||!text||!date){err.textContent='Please fill in all fields.';err.style.display='block';return;}if(selectedStar===0){err.textContent='Please select a star rating.';err.style.display='block';return;}if(!VG.includes(gatha)){err.textContent='Invalid gatha.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'feedback'),{name,gatha,stars:selectedStar,text,date,createdAt:serverTimestamp()});hide('fbForm');}
+async function addFeedback(){if(!isCom())return;const name=san(document.getElementById('fbName').value),gatha=document.getElementById('fbGatha').value,text=san(document.getElementById('fbText').value),date=document.getElementById('fbDate').value,err=document.getElementById('fbErr');if(!name||!text||!date){err.textContent='Please fill in all fields.';err.style.display='block';return;}if(selectedStar===0){err.textContent='Please select a star rating.';err.style.display='block';return;}if(!VG.includes(gatha)){err.textContent='Invalid gatha.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'feedback'),{name,gatha,stars:selectedStar,text,date,createdAt:serverTimestamp()});logAction('participation',`gave feedback to ${name} (${selectedStar}★)`);hide('fbForm');}
 window.addFeedback=addFeedback;
-async function askDelFb(id,name){if(!isCom())return;askDel(`Delete this feedback for ${name}?`,async()=>{await deleteDoc(doc(db,'feedback',id));});}
+async function askDelFb(id,name){if(!isCom())return;askDel(`Delete this feedback for ${name}?`,async()=>{await deleteDoc(doc(db,'feedback',id));logAction('participation',`deleted feedback for ${name}`);});}
 window.askDelFb=askDelFb;
 function renderFb(){const bn={};feedbacks.forEach(f=>{if(!bn[f.name])bn[f.name]=[];bn[f.name].push(f);});const names=Object.keys(bn).sort();const fl=document.getElementById('fbList'),fe=document.getElementById('fbEmpty');if(!names.length){fl.innerHTML='';fe.style.display='block';return;}fe.style.display='none';fl.innerHTML=names.map(name=>{const e=[...bn[name]];const avg=(e.reduce((s,x)=>s+x.stars,0)/e.length).toFixed(1);const st=[1,2,3,4,5].map(i=>`<span style="font-size:16px;color:${i<=Math.round(parseFloat(avg))?'#f4b400':'#e0e0e0'};">★</span>`).join('');return`<div class="fb-card"><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div class="fb-av">${ini(name)}</div><div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:500;color:var(--ots);">${san(name)}</div><div style="font-size:11px;color:var(--ots-v);">${e.length} feedback entr${e.length!==1?'ies':'y'}</div></div><div style="text-align:right;"><div style="font-size:18px;font-weight:500;color:#f4b400;">${avg} ★</div></div></div><div style="display:flex;gap:2px;margin-bottom:8px;">${st}</div><div class="fb-entries">${e.map(x=>`<div class="fb-entry"><div style="display:flex;gap:1px;flex-shrink:0;">${[1,2,3,4,5].map(i=>`<span style="font-size:12px;color:${i<=x.stars?'#f4b400':'#e0e0e0'};">★</span>`).join('')}</div><div class="fb-entry-body"><div class="fb-entry-text">${san(x.text)}</div><div class="fb-entry-meta"><span>${fd(x.date)} · ${san(x.gatha)}</span>${isCom()?`<button class="del-btn" onclick="askDelFb('${x.id}','${san(name).replace(/'/g,"\\'")}')"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>Delete</button>`:''}</div></div></div>`).join('')}</div></div>`;}).join('');}
 // TREASURY
@@ -1459,25 +1556,25 @@ function renderT(){
   document.getElementById('hlogList').innerHTML=hlogs.slice(0,10).length?hlogs.slice(0,10).map(h=>`<div class="li"><div style="width:36px;height:36px;border-radius:50%;background:${h.type==='in'?'#D6F5E3':'#FDECEA'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${h.type==='in'?'<svg width="18" height="18" viewBox="0 0 24 24" fill="#006E30"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg>':'<svg width="18" height="18" viewBox="0 0 24 24" fill="#B3261E"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>'}</div><div class="li-body"><div class="li-t">${san(h.note)}</div><div class="li-s">${fd(h.date)}</div></div><div class="li-r"><span style="font-size:13px;font-weight:500;color:${h.type==='in'?'var(--grn)':'var(--red)'};">${h.type==='in'?'+':'−'} Rs ${(h.amount||0).toLocaleString()}</span>${isSU()?dB(`askDelHlog('${h.id}')`):''}  </div></div>`).join(''):'<div class="empty">No entries yet.</div>';
   applyRole();
 }
-async function addCol(){if(!isSU())return;const d=document.getElementById('colDate').value,a=sanNum(document.getElementById('colAmt').value,1,99999),slip=san(document.getElementById('colSlip').value),err=document.getElementById('colErr');if(!d||a===null){err.textContent='Valid date and amount required.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'collections'),{date:d,amount:a,slip,createdAt:serverTimestamp()});['colAmt','colSlip'].forEach(i=>document.getElementById(i).value='');hide('frmC');}
+async function addCol(){if(!isSU())return;const d=document.getElementById('colDate').value,a=sanNum(document.getElementById('colAmt').value,1,99999),slip=san(document.getElementById('colSlip').value),err=document.getElementById('colErr');if(!d||a===null){err.textContent='Valid date and amount required.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'collections'),{date:d,amount:a,slip,createdAt:serverTimestamp()});logAction('treasury',`recorded a Pin Katte collection of Rs ${a.toLocaleString()}`);['colAmt','colSlip'].forEach(i=>document.getElementById(i).value='');hide('frmC');}
 window.addCol=addCol;
-async function addExp(){if(!isSU())return;const d=document.getElementById('expDate').value,a=sanNum(document.getElementById('expAmt').value,1,99999),cat=document.getElementById('expCat').value,note=san(document.getElementById('expNote').value),err=document.getElementById('expErr');if(!d||a===null||!note){err.textContent='All fields required.';err.style.display='block';return;}if(!VEC.includes(cat)){err.textContent='Invalid category.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'expenses'),{date:d,amount:a,cat,note,createdAt:serverTimestamp()});['expAmt','expNote'].forEach(i=>document.getElementById(i).value='');hide('frmE');}
+async function addExp(){if(!isSU())return;const d=document.getElementById('expDate').value,a=sanNum(document.getElementById('expAmt').value,1,99999),cat=document.getElementById('expCat').value,note=san(document.getElementById('expNote').value),err=document.getElementById('expErr');if(!d||a===null||!note){err.textContent='All fields required.';err.style.display='block';return;}if(!VEC.includes(cat)){err.textContent='Invalid category.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'expenses'),{date:d,amount:a,cat,note,createdAt:serverTimestamp()});logAction('treasury',`recorded an expense of Rs ${a.toLocaleString()} (${note})`);['expAmt','expNote'].forEach(i=>document.getElementById(i).value='');hide('frmE');}
 window.addExp=addExp;
-async function addDep(){if(!isSU())return;const d=document.getElementById('depDate').value,a=sanNum(document.getElementById('depAmt').value,1,99999),ref=san(document.getElementById('depRef').value),err=document.getElementById('depErr');if(!d||a===null){err.textContent='Valid date and amount required.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'deposits'),{date:d,amount:a,ref,createdAt:serverTimestamp()});['depAmt','depRef'].forEach(i=>document.getElementById(i).value='');hide('frmD');}
+async function addDep(){if(!isSU())return;const d=document.getElementById('depDate').value,a=sanNum(document.getElementById('depAmt').value,1,99999),ref=san(document.getElementById('depRef').value),err=document.getElementById('depErr');if(!d||a===null){err.textContent='Valid date and amount required.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'deposits'),{date:d,amount:a,ref,createdAt:serverTimestamp()});logAction('treasury',`recorded a bank deposit of Rs ${a.toLocaleString()}`);['depAmt','depRef'].forEach(i=>document.getElementById(i).value='');hide('frmD');}
 window.addDep=addDep;
-async function addHlog(){if(!isSU())return;const d=document.getElementById('hDate').value,a=sanNum(document.getElementById('hAmt').value,1,99999),type=document.getElementById('hType').value,note=san(document.getElementById('hNote').value),err=document.getElementById('hErr');if(!d||a===null||!note){err.textContent='All fields required.';err.style.display='block';return;}if(!['in','out'].includes(type)){err.textContent='Invalid type.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'cashlog'),{date:d,amount:a,type,note,createdAt:serverTimestamp()});['hAmt','hNote'].forEach(i=>document.getElementById(i).value='');hide('frmH');}
+async function addHlog(){if(!isSU())return;const d=document.getElementById('hDate').value,a=sanNum(document.getElementById('hAmt').value,1,99999),type=document.getElementById('hType').value,note=san(document.getElementById('hNote').value),err=document.getElementById('hErr');if(!d||a===null||!note){err.textContent='All fields required.';err.style.display='block';return;}if(!['in','out'].includes(type)){err.textContent='Invalid type.';err.style.display='block';return;}err.style.display='none';await addDoc(collection(db,'cashlog'),{date:d,amount:a,type,note,createdAt:serverTimestamp()});logAction('treasury',`logged Rs ${a.toLocaleString()} cash ${type==='in'?'received':'spent'} (${note})`);['hAmt','hNote'].forEach(i=>document.getElementById(i).value='');hide('frmH');}
 window.addHlog=addHlog;
-async function askDelCol(id){if(!isSU())return;askDel('Delete this Pin Katte collection?',async()=>{await deleteDoc(doc(db,'collections',id));});}
+async function askDelCol(id){if(!isSU())return;askDel('Delete this Pin Katte collection?',async()=>{await deleteDoc(doc(db,'collections',id));logAction('treasury','deleted a Pin Katte collection entry');});}
 window.askDelCol=askDelCol;
-async function askDelExp(id,note){if(!isSU())return;askDel(`Delete expense: "${note}"?`,async()=>{await deleteDoc(doc(db,'expenses',id));});}
+async function askDelExp(id,note){if(!isSU())return;askDel(`Delete expense: "${note}"?`,async()=>{await deleteDoc(doc(db,'expenses',id));logAction('treasury',`deleted the expense "${note}"`);});}
 window.askDelExp=askDelExp;
-async function askDelDep(id){if(!isSU())return;askDel('Delete this deposit?',async()=>{await deleteDoc(doc(db,'deposits',id));});}
+async function askDelDep(id){if(!isSU())return;askDel('Delete this deposit?',async()=>{await deleteDoc(doc(db,'deposits',id));logAction('treasury','deleted a bank deposit entry');});}
 window.askDelDep=askDelDep;
-async function askDelHlog(id){if(!isSU())return;askDel('Delete this cash log entry?',async()=>{await deleteDoc(doc(db,'cashlog',id));});}
+async function askDelHlog(id){if(!isSU())return;askDel('Delete this cash log entry?',async()=>{await deleteDoc(doc(db,'cashlog',id));logAction('treasury','deleted a cash log entry');});}
 window.askDelHlog=askDelHlog;
 function openHandDlg(){if(!isSU())return;document.getElementById('hmAmt').value=hcur.amount||'';document.getElementById('hmNote').value='';document.getElementById('hmErr').style.display='none';document.getElementById('handDlg').style.display='flex';}
 window.openHandDlg=openHandDlg;
-async function saveHand(){if(!isSU())return;const a=sanNum(document.getElementById('hmAmt').value,0,99999),note=san(document.getElementById('hmNote').value),err=document.getElementById('hmErr');if(a===null||!note){err.textContent='Amount and reason required.';err.style.display='block';return;}await setDoc(doc(db,'config','cashInHand'),{amount:a,note,updatedAt:serverTimestamp()});closeDlg('handDlg');}
+async function saveHand(){if(!isSU())return;const a=sanNum(document.getElementById('hmAmt').value,0,99999),note=san(document.getElementById('hmNote').value),err=document.getElementById('hmErr');if(a===null||!note){err.textContent='Amount and reason required.';err.style.display='block';return;}await setDoc(doc(db,'config','cashInHand'),{amount:a,note,updatedAt:serverTimestamp()});logAction('treasury',`updated cash in hand to Rs ${a.toLocaleString()} (${note})`);closeDlg('handDlg');}
 window.saveHand=saveHand;
 // REPORTS
 function renderRep(){if(!isCom()){document.getElementById('rLocked').style.display='block';document.getElementById('rContent').style.display='none';return;}document.getElementById('rLocked').style.display='none';document.getElementById('rContent').style.display='block';const am={};[...cols,...exps].forEach(t=>{const k=mk(t.date);if(!am[k])am[k]={i:0,e:0};});cols.forEach(c=>{am[mk(c.date)].i+=c.amount||0;});exps.forEach(e=>{am[mk(e.date)].e+=e.amount||0;});const ks=Object.keys(am).sort().reverse();document.getElementById('monthRep').innerHTML=ks.length?ks.map(k=>{const{i,e}=am[k],bal=i-e;return`<div style="background:var(--sur-c);border-radius:var(--r-m);padding:14px;margin-bottom:10px;"><div style="font-size:14px;font-weight:500;color:var(--ots);margin-bottom:10px;">${fmo(k+'-01')}</div><div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--ots-v);"><span>Income</span><span style="color:var(--grn);font-weight:500;">Rs ${i.toLocaleString()}</span></div><div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--ots-v);"><span>Expenses</span><span style="color:var(--red);font-weight:500;">Rs ${e.toLocaleString()}</span></div><div style="border-top:0.5px solid var(--out);margin:8px 0;"></div><div style="display:flex;justify-content:space-between;font-size:14px;font-weight:500;"><span>Net balance</span><span style="color:${bal>=0?'var(--grn)':'var(--red)'};">Rs ${bal.toLocaleString()}</span></div></div>`;}).join(''):'<div class="empty">No data yet.</div>';const mi={};cols.forEach(c=>{const k=mk(c.date);mi[k]=(mi[k]||0)+(c.amount||0);});const bk=Object.keys(mi).sort().slice(-5);const bm=Math.max(...bk.map(k=>mi[k]),1);document.getElementById('barChart').innerHTML=bk.map(k=>`<div class="bar-row"><div class="bar-lbl">${new Date(k+'-01').toLocaleDateString('en-GB',{month:'short'})}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(mi[k]/bm*100)}%"><span class="bar-val">Rs ${mi[k].toLocaleString()}</span></div></div></div>`).join('');}
@@ -1523,6 +1620,7 @@ async function genInvite(){
   const code=mkCode();
   const expiresAt=new Date(Date.now()+48*60*60*1000).toISOString();
   await addDoc(collection(db,'invites'),{code,role,createdBy:curUser.id,createdAt:new Date().toISOString(),expiresAt,used:false});
+  logAction('user',`generated an invite code for a ${RL[role]} role`);
   curInviteCode=code;
   document.getElementById('inviteCodeDisp').textContent=code;
   document.getElementById('inviteRoleDisp').textContent='Role: '+RL[role];
@@ -1535,15 +1633,15 @@ function copyInvite(){
   navigator.clipboard.writeText(msg).then(()=>{document.getElementById('copyMsg').style.display='block';setTimeout(()=>{document.getElementById('copyMsg').style.display='none';},3000);}).catch(()=>{prompt('Copy this message:',msg);});
 }
 window.copyInvite=copyInvite;
-async function revokeCode(id){await updateDoc(doc(db,'invites',id),{used:true});renderUsers();}
+async function revokeCode(id){await updateDoc(doc(db,'invites',id),{used:true});logAction('user','revoked an invite code');renderUsers();}
 window.revokeCode=revokeCode;
-async function approveUser(id){await updateDoc(doc(db,'users',id),{approved:true});renderUsers();}
+async function approveUser(id){const us=await getDoc(doc(db,'users',id));const uname=us.exists()?(us.data().name||us.data().username):'a user';await updateDoc(doc(db,'users',id),{approved:true});logAction('user',`approved ${uname}'s account`);renderUsers();}
 window.approveUser=approveUser;
-async function rejectUser(id){askDel('Remove this pending user?',async()=>{await deleteDoc(doc(db,'users',id));renderUsers();});}
+async function rejectUser(id){askDel('Remove this pending user?',async()=>{const us=await getDoc(doc(db,'users',id));const uname=us.exists()?(us.data().name||us.data().username):'a pending user';await deleteDoc(doc(db,'users',id));logAction('user',`rejected ${uname}'s account request`);renderUsers();});}
 window.rejectUser=rejectUser;
-async function changeRole(id,role){if(!isSU())return;await updateDoc(doc(db,'users',id),{role});renderUsers();}
+async function changeRole(id,role){if(!isSU())return;const us=await getDoc(doc(db,'users',id));const uname=us.exists()?(us.data().name||us.data().username):'a user';await updateDoc(doc(db,'users',id),{role});logAction('user',`changed ${uname}'s role to ${RL[role]||role}`);renderUsers();}
 window.changeRole=changeRole;
-async function removeUser(id,name){if(!isSU())return;askDel(`Remove ${name} from the portal?`,async()=>{await deleteDoc(doc(db,'users',id));renderUsers();});}
+async function removeUser(id,name){if(!isSU())return;askDel(`Remove ${name} from the portal?`,async()=>{await deleteDoc(doc(db,'users',id));logAction('user',`removed ${name} from the portal`);renderUsers();});}
 // SKELETON HELPERS
 function skelLines(n){return Array.from({length:n},(_,i)=>`<div class="skel skel-line ${i===0?'med':i===n-1?'short':'full'}"></div>`).join('');}
 function skelCard(rows=2){return`<div class="skel-card"><div class="skel-row" style="border:none;padding:0;"><div class="skel skel-avatar"></div><div style="flex:1;">${skelLines(rows)}</div></div></div>`;}
@@ -1794,6 +1892,7 @@ async function scheduleEvent(){
     await addDoc(collection(db,'eventTemplates'),{name,activities:tplActivities,createdBy:curUser.id,createdAt:serverTimestamp()});
   }
   await addDoc(collection(db,'scheduledEvents'),{name,date,activities,createdBy:curUser.id,createdAt:serverTimestamp()});
+  logAction('program',`scheduled the program "${name}"`);
   hide('schedForm');
   resetSchedForm();
 }
@@ -1863,11 +1962,12 @@ async function updateActStatus(evtId,actIdx,newStatus,el){
   if(el){el.classList.remove('status-flash');void el.offsetWidth;el.classList.add('status-flash');}
   if(newStatus==='done')burstConfetti(window.innerWidth/2,window.innerHeight/3);
   await updateDoc(doc(db,'scheduledEvents',evtId),{activities:acts});
+  logAction('program',`marked "${acts[actIdx].name}" in "${evt.name}" as ${newStatus==='planned'?'Planned':newStatus==='inprogress'?'In Progress':'Done'}`);
 }
 window.updateActStatus=updateActStatus;
 async function askDelSchedEvt(id,name){
   if(!isCom())return;
-  askDel(`Delete program "${name}"?`,async()=>{await deleteDoc(doc(db,'scheduledEvents',id));});
+  askDel(`Delete program "${name}"?`,async()=>{await deleteDoc(doc(db,'scheduledEvents',id));logAction('program',`deleted the program "${name}"`);});
 }
 window.askDelSchedEvt=askDelSchedEvt;
 function renderEvtInCal(){
@@ -2178,6 +2278,47 @@ async function askDelMin(id){
   askDel('Delete these meeting minutes?',async()=>{await deleteDoc(doc(db,'minutes',id));});
 }
 window.askDelMin=askDelMin;
+
+// ACTIVITY LOG RENDER
+const LOG_ICONS={notice:'📋',assembly:'🏛️',participation:'🙏',treasury:'💰',program:'📊',user:'👥'};
+function timeAgo(ts){
+  if(!ts)return'';
+  const d=ts.toDate?ts.toDate():new Date(ts);
+  const diffMs=Date.now()-d.getTime();
+  const mins=Math.floor(diffMs/60000);
+  if(mins<1)return'just now';
+  if(mins<60)return mins+'m ago';
+  const hrs=Math.floor(mins/60);
+  if(hrs<24)return hrs+'h ago';
+  const days=Math.floor(hrs/24);
+  if(days<7)return days+'d ago';
+  return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+' at '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+}
+function renderActivityLog(){
+  if(!isCom()){
+    document.getElementById('logLocked').style.display='block';
+    document.getElementById('logContent').style.display='none';
+    return;
+  }
+  document.getElementById('logLocked').style.display='none';
+  document.getElementById('logContent').style.display='block';
+  const filterEl=document.getElementById('logFilter');
+  const f=filterEl?filterEl.value:'all';
+  const listEl=document.getElementById('actLogList');
+  if(!listEl)return;
+  const filtered=f==='all'?activityLog:activityLog.filter(l=>l.category===f);
+  if(!filtered.length){listEl.innerHTML='<div class="empty">No activity recorded yet.</div>';return;}
+  listEl.innerHTML=filtered.slice(0,80).map(l=>`
+    <div class="log-item">
+      <div class="log-icon">${LOG_ICONS[l.category]||'📌'}</div>
+      <div class="log-body">
+        <div class="log-text"><b>${san(l.userName||'Someone')}</b> ${san(l.text)}</div>
+        <div class="log-time">${timeAgo(l.createdAt)}</div>
+      </div>
+    </div>
+  `).join('');
+}
+window.renderActivityLog=renderActivityLog;
 // ═══════════════════════════════════════════════════
 //  INIT
 async function init(){

@@ -45,6 +45,17 @@ body.dark{
 }
 /* APP SHELL */
 .app{display:flex;flex-direction:column;min-height:100vh;max-width:600px;margin:0 auto;background:var(--sur-c);}
+@media(min-width:900px){
+  .app{max-width:980px;}
+  .content{padding:24px 32px;}
+  .qa-grid{grid-template-columns:repeat(4,1fr);}
+  .dash-stats{grid-template-columns:repeat(3,1fr);max-width:600px;}
+  .asm-grid{grid-template-columns:repeat(4,1fr);}
+  .metric-row{max-width:700px;}
+}
+@media(min-width:1200px){
+  .app{max-width:1140px;}
+}
 /* TOPBAR */
 .topbar{
   background:var(--bsa);
